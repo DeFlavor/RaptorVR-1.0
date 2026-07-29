@@ -710,7 +710,7 @@ def schematic_drawing():
     ax.plot([13.02, 13.38], [5.76, 5.76], color="#334155", lw=2)
     ax.plot([13.10, 13.30], [5.68, 5.68], color="#334155", lw=2)
     ax.text(8.0, 9.45, "RaptorVR 1.0 - ESP32 + MuMo Carrier", ha="center", fontsize=22, weight="bold", color="#4c1d95")
-    ax.text(8.0, 9.05, "Functional schematic and assembly map - revision 0.10 prototype", ha="center", fontsize=10, color="#475569")
+    ax.text(8.0, 9.05, "Functional schematic and assembly map - revision 0.11 prototype", ha="center", fontsize=10, color="#475569")
     ax.text(8.0, 0.35, "WARNING: verify every connection with a multimeter before attaching a LiPo. Never reverse BAT+ and BAT-.", ha="center", fontsize=9, color="#b91c1c", weight="bold")
     fig.tight_layout()
     fig.savefig(SCHEMATIC / "RaptorVR_1_0_schematic.pdf", bbox_inches="tight")
@@ -852,6 +852,43 @@ def lid_logo_preview(width, depth, screw_centers, mark, text_geometry):
     plt.close(fig)
 
 
+def export_chassis_viewers(case, tray, lid, case_height):
+    """Export accurate colored GLB scenes for orbit/zoom web viewing."""
+    def colored_copy(mesh, rgba):
+        copy = mesh.copy()
+        copy.visual.face_colors = np.tile(np.asarray(rgba, dtype=np.uint8), (len(copy.faces), 1))
+        return copy
+
+    parts = {
+        "case": colored_copy(case, [124, 58, 237, 255]),
+        "separator": colored_copy(tray, [148, 163, 184, 255]),
+        "logo_lid": colored_copy(lid, [34, 197, 94, 255]),
+    }
+    assembled = trimesh.Scene()
+    assembled.add_geometry(parts["case"], geom_name="case", node_name="case")
+    assembled.add_geometry(
+        parts["separator"], geom_name="separator", node_name="separator",
+        transform=trimesh.transformations.translation_matrix([0, 0, 14.6]),
+    )
+    assembled.add_geometry(
+        parts["logo_lid"], geom_name="logo_lid", node_name="logo_lid",
+        transform=trimesh.transformations.translation_matrix([0, 0, case_height]),
+    )
+    (PRINTABLES / "RaptorVR_1_0_chassis_assembled.glb").write_bytes(assembled.export(file_type="glb"))
+
+    exploded = trimesh.Scene()
+    exploded.add_geometry(parts["case"], geom_name="case", node_name="case")
+    exploded.add_geometry(
+        parts["separator"], geom_name="separator", node_name="separator",
+        transform=trimesh.transformations.translation_matrix([0, 0, 39.0]),
+    )
+    exploded.add_geometry(
+        parts["logo_lid"], geom_name="logo_lid", node_name="logo_lid",
+        transform=trimesh.transformations.translation_matrix([0, 0, 64.0]),
+    )
+    (PRINTABLES / "RaptorVR_1_0_chassis_exploded.glb").write_bytes(exploded.export(file_type="glb"))
+
+
 def enclosure_models():
     PRINTABLES.mkdir(parents=True, exist_ok=True)
     # Overall body is intentionally larger than meowCarrier to fit the 52 mm
@@ -969,6 +1006,8 @@ def enclosure_models():
     fig.savefig(PREVIEWS / "enclosure_exploded.png", dpi=180, bbox_inches="tight", facecolor="#f8fafc")
     plt.close(fig)
 
+    export_chassis_viewers(case, tray, lid, H)
+
     return [case, tray, lid]
 
 
@@ -1031,6 +1070,10 @@ def validate_design(pads, npth, tracks, vias, meshes):
         "uniform_scaling": True,
         "minimum_recommended_nozzle_mm": 0.4,
     }
+    report["checks"]["interactive_3d_models"] = [
+        "RaptorVR_1_0_chassis_assembled.glb",
+        "RaptorVR_1_0_chassis_exploded.glb",
+    ]
     report["checks"]["battery_pocket_mm"] = [64.0, 42.0, 12.0]
     report["checks"]["confirmed_battery_mm"] = [52.0, 30.5, 11.0]
     report["warnings"].extend([
@@ -1055,7 +1098,7 @@ RaptorVR 1.0 is a **prototype** SlimeVR carrier and enclosure for the **ELEGOO E
 
 ## Important status
 
-This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.10 as a prototype and inspect it in a Gerber viewer before ordering.
+This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.11 as a prototype and inspect it in a Gerber viewer before ordering.
 
 ## Supported parts
 
@@ -1112,6 +1155,7 @@ Creality Print can import the STL files in `hardware/enclosure/`:
 - `RaptorVR_1_0_case_50mm_strap`: rounded chassis with ESP32 USB-C, charger USB-C, switch openings, and four reinforced screw bosses.
 - `RaptorVR_1_0_battery_separator_tray`: full insulating barrier between the LiPo and PCB, with PCB standoffs and a small wire slot.
 - `RaptorVR_1_0_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes, a 0.20 mm-per-side alignment plug, and the centered raised RaptorVR logo.
+- `RaptorVR_1_0_chassis_assembled.glb` and `RaptorVR_1_0_chassis_exploded.glb`: accurate colored models for interactive orbit and zoom viewing.
 
 The complete supplied logo image is traced directly into the lid—raptor mark, original lettering shapes, spacing, and the original `RAPTOR`/`VR` two-line arrangement. No substitute font is used. The artwork is scaled uniformly to 54 mm wide and embossed 0.8 mm above the lid for clear resin and FDM visibility. For a contrasting FDM logo, add a filament change for the final four 0.20 mm layers; a single-color print also works. For resin, angle the lid approximately 20-30 degrees and place supports on the inside face so the raised logo remains clean.
 
@@ -1205,7 +1249,7 @@ def main():
     (source_assets / "RaptorVR_logo_reference.png").write_bytes(LOGO_PNG_BYTES)
     design = {
         "name": "RaptorVR 1.0",
-        "revision": "0.10-prototype-exact-source-logo",
+        "revision": "0.11-prototype-interactive-viewer",
         "board_mm": [BOARD_W, BOARD_H, 1.0],
         "components": [{"ref": c.ref, "value": c.value, "outline": c.outline} for c in components],
         "pads": [p.__dict__ for p in pads],

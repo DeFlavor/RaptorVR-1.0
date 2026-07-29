@@ -10,7 +10,7 @@ RaptorVR 1.0 is a **prototype** SlimeVR carrier and enclosure for the **ELEGOO E
 
 ## Important status
 
-This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.10 as a prototype and inspect it in a Gerber viewer before ordering.
+This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.11 as a prototype and inspect it in a Gerber viewer before ordering.
 
 ## Supported parts
 
@@ -67,6 +67,7 @@ Creality Print can import the STL files in `hardware/enclosure/`:
 - `RaptorVR_1_0_case_50mm_strap`: rounded chassis with ESP32 USB-C, charger USB-C, switch openings, and four reinforced screw bosses.
 - `RaptorVR_1_0_battery_separator_tray`: full insulating barrier between the LiPo and PCB, with PCB standoffs and a small wire slot.
 - `RaptorVR_1_0_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes, a 0.20 mm-per-side alignment plug, and the centered raised RaptorVR logo.
+- `RaptorVR_1_0_chassis_assembled.glb` and `RaptorVR_1_0_chassis_exploded.glb`: accurate colored models for interactive orbit and zoom viewing.
 
 The complete supplied logo image is traced directly into the lid—raptor mark, original lettering shapes, spacing, and the original `RAPTOR`/`VR` two-line arrangement. No substitute font is used. The artwork is scaled uniformly to 54 mm wide and embossed 0.8 mm above the lid for clear resin and FDM visibility. For a contrasting FDM logo, add a filament change for the final four 0.20 mm layers; a single-color print also works. For resin, angle the lid approximately 20-30 degrees and place supports on the inside face so the raised logo remains clean.
 

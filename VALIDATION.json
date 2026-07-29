@@ -28,6 +28,10 @@
       "uniform_scaling": true,
       "minimum_recommended_nozzle_mm": 0.4
     },
+    "interactive_3d_models": [
+      "RaptorVR_1_0_chassis_assembled.glb",
+      "RaptorVR_1_0_chassis_exploded.glb"
+    ],
     "battery_pocket_mm": [
       64.0,
       42.0,
