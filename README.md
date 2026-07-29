@@ -6,9 +6,11 @@ RaptorVR 1.0 is a **prototype** SlimeVR carrier and enclosure for the **ELEGOO E
 
 ![Enclosure exploded view](previews/enclosure_exploded.png)
 
+![Raised logo lid preview](previews/lid_logo_top.png)
+
 ## Important status
 
-This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.3 as a prototype and inspect it in a Gerber viewer before ordering.
+This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.4 as a prototype and inspect it in a Gerber viewer before ordering.
 
 ## Supported parts
 
@@ -64,7 +66,9 @@ Creality Print can import the STL files in `hardware/enclosure/`:
 
 - `RaptorVR_1_0_case_50mm_strap`: rounded chassis with ESP32 USB-C, charger USB-C, switch openings, and four reinforced screw bosses.
 - `RaptorVR_1_0_battery_separator_tray`: full insulating barrier between the LiPo and PCB, with PCB standoffs and a small wire slot.
-- `RaptorVR_1_0_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes and a 0.20 mm-per-side alignment plug.
+- `RaptorVR_1_0_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes, a 0.20 mm-per-side alignment plug, and the centered raised RaptorVR logo.
+
+The supplied raptor mark is embossed 0.6 mm above the lid. The mark is 28 mm tall, with smaller 28 mm-wide `RAPTOR VR` lettering beneath it. For a contrasting logo, add a filament change for the final three 0.20 mm layers; a single-color print also works.
 
 Use four **M3 x 10 mm thread-forming/self-tapping pan-head screws for plastic**. The case has 2.6 mm blind pilot holes, so the screw tips cannot reach the PCB or battery. Tighten only until the lid is seated; overtightening can strip printed threads. Do not use screws longer than 10 mm unless you first verify the remaining boss depth.
 
@@ -85,10 +89,11 @@ Starting Creality settings: 0.4 mm nozzle, 0.20 mm layers, four walls, five top/
 
 - Editable PCB layout: `hardware/pcb/source/RaptorVR_1_0.kicad_pcb`
 - Dimension-controlled generator: `hardware/pcb/source/generate_project.py`
+- Supplied logo reference: `hardware/pcb/source/assets/RaptorVR_logo_reference.png`
 - Human-readable schematic: `hardware/pcb/schematic/RaptorVR_1_0_schematic.pdf`
 - Validation report: `VALIDATION.json`
 
-Regenerate with Python 3.12 plus `numpy`, `shapely`, `trimesh`, `manifold3d`, `matplotlib`, `reportlab`, and `gerbonara`.
+Regenerate with Python 3.12 plus `numpy`, `Pillow`, `shapely`, `trimesh`, `manifold3d`, `matplotlib`, `reportlab`, and `gerbonara`.
 
 ## References and attribution
 

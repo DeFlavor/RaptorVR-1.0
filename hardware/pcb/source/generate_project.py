@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import heapq
+import io
 import json
 import math
 import shutil
@@ -15,6 +16,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.font_manager import FontProperties
 from matplotlib.patches import Circle, FancyBboxPatch, Rectangle
 from matplotlib.path import Path as MplPath
 from matplotlib.textpath import TextPath
@@ -22,11 +24,23 @@ from matplotlib.transforms import Affine2D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import numpy as np
 import trimesh
+from PIL import Image
+from shapely.affinity import scale as scale_geometry
+from shapely.affinity import translate as translate_geometry
 from shapely.geometry import LineString, Point, Polygon, box
 from shapely.ops import unary_union
 
 
-ROOT = Path(__file__).resolve().parents[1]
+SCRIPT_PATH = Path(__file__).resolve()
+SCRIPT_BYTES = SCRIPT_PATH.read_bytes()
+ROOT = next(
+    (
+        candidate
+        for candidate in SCRIPT_PATH.parents
+        if (candidate / "work").is_dir() and (candidate / "outputs").is_dir()
+    ),
+    SCRIPT_PATH.parents[1],
+)
 OUT = ROOT / "outputs" / "esp32-mumo-tracker"
 PCB = OUT / "hardware" / "pcb"
 GERBERS = PCB / "gerbers"
@@ -34,6 +48,8 @@ SCHEMATIC = PCB / "schematic"
 SOURCE = PCB / "source"
 PRINTABLES = OUT / "hardware" / "enclosure"
 PREVIEWS = OUT / "previews"
+LOGO_ASSET = Path(__file__).resolve().parent / "assets" / "RaptorVR_logo_reference.png"
+LOGO_PNG_BYTES = LOGO_ASSET.read_bytes()
 
 GRID = 0.254  # 10 mil routing grid
 BOARD_W = 86.36
@@ -695,7 +711,7 @@ def schematic_drawing():
     ax.plot([13.02, 13.38], [5.76, 5.76], color="#334155", lw=2)
     ax.plot([13.10, 13.30], [5.68, 5.68], color="#334155", lw=2)
     ax.text(8.0, 9.45, "RaptorVR 1.0 - ESP32 + MuMo Carrier", ha="center", fontsize=22, weight="bold", color="#4c1d95")
-    ax.text(8.0, 9.05, "Functional schematic and assembly map - revision 0.3 prototype", ha="center", fontsize=10, color="#475569")
+    ax.text(8.0, 9.05, "Functional schematic and assembly map - revision 0.4 prototype", ha="center", fontsize=10, color="#475569")
     ax.text(8.0, 0.35, "WARNING: verify every connection with a multimeter before attaching a LiPo. Never reverse BAT+ and BAT-.", ha="center", fontsize=9, color="#b91c1c", weight="bold")
     fig.tight_layout()
     fig.savefig(SCHEMATIC / "RaptorVR_1_0_schematic.pdf", bbox_inches="tight")
@@ -751,6 +767,111 @@ def export_mesh(mesh: trimesh.Trimesh, basename: str):
         (PRINTABLES / f"{basename}.3mf").write_bytes(trimesh.exchange.export.export_mesh(mesh, file_type="3mf"))
     except Exception:
         pass
+
+
+def iter_polygons(geometry):
+    """Yield printable polygon islands from Polygon/MultiPolygon geometry."""
+    if geometry.is_empty:
+        return
+    if geometry.geom_type == "Polygon":
+        if geometry.area >= 0.05:
+            yield geometry
+        return
+    for child in geometry.geoms:
+        yield from iter_polygons(child)
+
+
+def centered_logo_geometry():
+    """Trace the supplied raptor mark and pair it with restrained small text."""
+    rgb = np.asarray(Image.open(io.BytesIO(LOGO_PNG_BYTES)).convert("RGB"), dtype=np.int16)
+    channel_spread = rgb.max(axis=2) - rgb.min(axis=2)
+    # The image uses a near-neutral black mark and blue-green text. Selecting
+    # the largest neutral-dark contour isolates the supplied raptor symbol.
+    neutral_dark = (rgb.mean(axis=2) < 100) & (channel_spread < 25)
+    sampled = np.flipud(neutral_dark[::4, ::4]).astype(float)
+    fig, ax = plt.subplots(figsize=(2, 2))
+    contours = ax.contour(sampled, levels=[0.5]).allsegs[0]
+    plt.close(fig)
+    candidates = []
+    for vertices in contours:
+        if len(vertices) < 4:
+            continue
+        candidate = Polygon(vertices).buffer(0)
+        if candidate.area > 2.0:
+            candidates.append(candidate)
+    if not candidates:
+        raise RuntimeError("Could not trace the supplied RaptorVR logo")
+    mark = max(candidates, key=lambda candidate: candidate.area)
+    mark = mark.simplify(0.45, preserve_topology=True).buffer(0.18, join_style=1)
+    min_x, min_y, max_x, max_y = mark.bounds
+    mark_scale = 28.0 / (max_y - min_y)
+    mark = translate_geometry(mark, xoff=-min_x, yoff=-min_y)
+    mark = scale_geometry(mark, xfact=mark_scale, yfact=mark_scale, origin=(0, 0))
+    min_x, min_y, max_x, max_y = mark.bounds
+    mark = translate_geometry(
+        mark,
+        xoff=46.0 - (min_x + max_x) / 2,
+        yoff=35.0 - (min_y + max_y) / 2,
+    )
+
+    # A bold condensed face stays legible with a 0.4 mm nozzle while keeping
+    # the requested lettering visually secondary to the raptor symbol.
+    font = FontProperties(family="DejaVu Sans", weight="bold", stretch="condensed")
+    text_path = TextPath((0, 0), "RAPTOR VR", size=1.0, prop=font)
+    text_geometry = None
+    for vertices in text_path.to_polygons():
+        polygon = Polygon(vertices).buffer(0)
+        if polygon.area <= 1e-6:
+            continue
+        text_geometry = polygon if text_geometry is None else text_geometry.symmetric_difference(polygon)
+    if text_geometry is None or text_geometry.is_empty:
+        raise RuntimeError("Could not construct RaptorVR lid lettering")
+    min_x, min_y, max_x, max_y = text_geometry.bounds
+    text_scale = 28.0 / (max_x - min_x)
+    text_geometry = translate_geometry(text_geometry, xoff=-min_x, yoff=-min_y)
+    text_geometry = scale_geometry(text_geometry, xfact=text_scale, yfact=text_scale, origin=(0, 0))
+    min_x, min_y, max_x, max_y = text_geometry.bounds
+    text_geometry = translate_geometry(
+        text_geometry,
+        xoff=46.0 - (min_x + max_x) / 2,
+        yoff=12.5 - min_y,
+    )
+    return mark, text_geometry
+
+
+def logo_meshes(mark, text_geometry):
+    meshes = []
+    for polygon in list(iter_polygons(mark)) + list(iter_polygons(text_geometry)):
+        mesh = trimesh.creation.extrude_polygon(polygon, 0.64)
+        mesh.apply_translation([0, 0, 1.96])
+        meshes.append(mesh)
+    return meshes
+
+
+def lid_logo_preview(width, depth, screw_centers, mark, text_geometry):
+    fig, ax = plt.subplots(figsize=(10, 7))
+    ax.add_patch(FancyBboxPatch(
+        (0, 0), width, depth,
+        boxstyle="round,pad=0,rounding_size=6",
+        facecolor="#e5e7eb", edgecolor="#111827", linewidth=2.0,
+    ))
+    for sx, sy in screw_centers:
+        ax.add_patch(Circle((sx, sy), 4.5, facecolor="#e5e7eb", edgecolor="#111827", linewidth=2.0))
+        ax.add_patch(Circle((sx, sy), 1.7, facecolor="white", edgecolor="#111827", linewidth=1.1))
+    for geometry in (mark, text_geometry):
+        for polygon in iter_polygons(geometry):
+            x, y = polygon.exterior.xy
+            ax.fill(x, y, color="#111827")
+            for ring in polygon.interiors:
+                hx, hy = ring.xy
+                ax.fill(hx, hy, color="#e5e7eb")
+    ax.set_xlim(-7, width + 7)
+    ax.set_ylim(-7, depth + 7)
+    ax.set_aspect("equal")
+    ax.set_axis_off()
+    ax.set_title("RaptorVR 1.0 screw lid - raised logo preview", fontsize=17, weight="bold")
+    fig.savefig(PREVIEWS / "lid_logo_top.png", dpi=180, bbox_inches="tight", facecolor="#f8fafc")
+    plt.close(fig)
 
 
 def enclosure_models():
@@ -845,7 +966,10 @@ def enclosure_models():
         hole.apply_translation([sx, sy, 0.0])
         clearance_holes.append(hole)
     lid = trimesh.boolean.difference([lid] + clearance_holes, engine="manifold")
+    logo_mark, logo_text = centered_logo_geometry()
+    lid = trimesh.boolean.union([lid] + logo_meshes(logo_mark, logo_text), engine="manifold")
     export_mesh(lid, "RaptorVR_1_0_screw_lid_M3")
+    lid_logo_preview(W, D, screw_centers, logo_mark, logo_text)
 
     # Simple exploded preview.
     fig = plt.figure(figsize=(10, 8))
@@ -920,6 +1044,13 @@ def validate_design(pads, npth, tracks, vias, meshes):
         "case_blind_pilot_mm": 2.6,
         "minimum_thread_engagement_mm": 8.0,
     }
+    report["checks"]["lid_logo"] = {
+        "style": "raised",
+        "relief_mm": 0.6,
+        "raptor_mark_height_mm": 28.0,
+        "small_text_width_mm": 28.0,
+        "minimum_recommended_nozzle_mm": 0.4,
+    }
     report["checks"]["battery_pocket_mm"] = [64.0, 42.0, 12.0]
     report["checks"]["confirmed_battery_mm"] = [52.0, 30.5, 11.0]
     report["warnings"].extend([
@@ -940,9 +1071,11 @@ RaptorVR 1.0 is a **prototype** SlimeVR carrier and enclosure for the **ELEGOO E
 
 ![Enclosure exploded view](previews/enclosure_exploded.png)
 
+![Raised logo lid preview](previews/lid_logo_top.png)
+
 ## Important status
 
-This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.3 as a prototype and inspect it in a Gerber viewer before ordering.
+This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.4 as a prototype and inspect it in a Gerber viewer before ordering.
 
 ## Supported parts
 
@@ -998,7 +1131,9 @@ Creality Print can import the STL files in `hardware/enclosure/`:
 
 - `RaptorVR_1_0_case_50mm_strap`: rounded chassis with ESP32 USB-C, charger USB-C, switch openings, and four reinforced screw bosses.
 - `RaptorVR_1_0_battery_separator_tray`: full insulating barrier between the LiPo and PCB, with PCB standoffs and a small wire slot.
-- `RaptorVR_1_0_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes and a 0.20 mm-per-side alignment plug.
+- `RaptorVR_1_0_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes, a 0.20 mm-per-side alignment plug, and the centered raised RaptorVR logo.
+
+The supplied raptor mark is embossed 0.6 mm above the lid. The mark is 28 mm tall, with smaller 28 mm-wide `RAPTOR VR` lettering beneath it. For a contrasting logo, add a filament change for the final three 0.20 mm layers; a single-color print also works.
 
 Use four **M3 x 10 mm thread-forming/self-tapping pan-head screws for plastic**. The case has 2.6 mm blind pilot holes, so the screw tips cannot reach the PCB or battery. Tighten only until the lid is seated; overtightening can strip printed threads. Do not use screws longer than 10 mm unless you first verify the remaining boss depth.
 
@@ -1019,10 +1154,11 @@ Starting Creality settings: 0.4 mm nozzle, 0.20 mm layers, four walls, five top/
 
 - Editable PCB layout: `hardware/pcb/source/RaptorVR_1_0.kicad_pcb`
 - Dimension-controlled generator: `hardware/pcb/source/generate_project.py`
+- Supplied logo reference: `hardware/pcb/source/assets/RaptorVR_logo_reference.png`
 - Human-readable schematic: `hardware/pcb/schematic/RaptorVR_1_0_schematic.pdf`
 - Validation report: `VALIDATION.json`
 
-Regenerate with Python 3.12 plus `numpy`, `shapely`, `trimesh`, `manifold3d`, `matplotlib`, `reportlab`, and `gerbonara`.
+Regenerate with Python 3.12 plus `numpy`, `Pillow`, `shapely`, `trimesh`, `manifold3d`, `matplotlib`, `reportlab`, and `gerbonara`.
 
 ## References and attribution
 
@@ -1083,10 +1219,13 @@ def main():
     meshes = enclosure_models()
     report = validate_design(pads, npth, tracks, vias, meshes)
     write_readme()
-    shutil.copy2(Path(__file__), SOURCE / "generate_project.py")
+    (SOURCE / "generate_project.py").write_bytes(SCRIPT_BYTES)
+    source_assets = SOURCE / "assets"
+    source_assets.mkdir(parents=True, exist_ok=True)
+    (source_assets / "RaptorVR_logo_reference.png").write_bytes(LOGO_PNG_BYTES)
     design = {
         "name": "RaptorVR 1.0",
-        "revision": "0.3-prototype-1500mah-battery",
+        "revision": "0.4-prototype-logo-lid",
         "board_mm": [BOARD_W, BOARD_H, 1.0],
         "components": [{"ref": c.ref, "value": c.value, "outline": c.outline} for c in components],
         "pads": [p.__dict__ for p in pads],
