@@ -711,7 +711,7 @@ def schematic_drawing():
     ax.plot([13.02, 13.38], [5.76, 5.76], color="#334155", lw=2)
     ax.plot([13.10, 13.30], [5.68, 5.68], color="#334155", lw=2)
     ax.text(8.0, 9.45, "RaptorVR 1.0 - ESP32 + MuMo Carrier", ha="center", fontsize=22, weight="bold", color="#4c1d95")
-    ax.text(8.0, 9.05, "Functional schematic and assembly map - revision 0.4 prototype", ha="center", fontsize=10, color="#475569")
+    ax.text(8.0, 9.05, "Functional schematic and assembly map - revision 0.5 prototype", ha="center", fontsize=10, color="#475569")
     ax.text(8.0, 0.35, "WARNING: verify every connection with a multimeter before attaching a LiPo. Never reverse BAT+ and BAT-.", ha="center", fontsize=9, color="#b91c1c", weight="bold")
     fig.tight_layout()
     fig.savefig(SCHEMATIC / "RaptorVR_1_0_schematic.pdf", bbox_inches="tight")
@@ -804,38 +804,44 @@ def centered_logo_geometry():
     mark = max(candidates, key=lambda candidate: candidate.area)
     mark = mark.simplify(0.45, preserve_topology=True).buffer(0.18, join_style=1)
     min_x, min_y, max_x, max_y = mark.bounds
-    mark_scale = 28.0 / (max_y - min_y)
+    mark_scale = 30.0 / (max_y - min_y)
     mark = translate_geometry(mark, xoff=-min_x, yoff=-min_y)
     mark = scale_geometry(mark, xfact=mark_scale, yfact=mark_scale, origin=(0, 0))
     min_x, min_y, max_x, max_y = mark.bounds
     mark = translate_geometry(
         mark,
-        xoff=46.0 - (min_x + max_x) / 2,
-        yoff=35.0 - (min_y + max_y) / 2,
+        xoff=31.0 - (min_x + max_x) / 2,
+        yoff=30.0 - (min_y + max_y) / 2,
     )
 
     # A bold condensed face stays legible with a 0.4 mm nozzle while keeping
-    # the requested lettering visually secondary to the raptor symbol.
+    # the requested lettering visually secondary. RAPTOR sits in the open
+    # grip, with the smaller VR directly below, matching the supplied layout.
     font = FontProperties(family="DejaVu Sans", weight="bold", stretch="condensed")
-    text_path = TextPath((0, 0), "RAPTOR VR", size=1.0, prop=font)
-    text_geometry = None
-    for vertices in text_path.to_polygons():
-        polygon = Polygon(vertices).buffer(0)
-        if polygon.area <= 1e-6:
-            continue
-        text_geometry = polygon if text_geometry is None else text_geometry.symmetric_difference(polygon)
-    if text_geometry is None or text_geometry.is_empty:
-        raise RuntimeError("Could not construct RaptorVR lid lettering")
-    min_x, min_y, max_x, max_y = text_geometry.bounds
-    text_scale = 28.0 / (max_x - min_x)
-    text_geometry = translate_geometry(text_geometry, xoff=-min_x, yoff=-min_y)
-    text_geometry = scale_geometry(text_geometry, xfact=text_scale, yfact=text_scale, origin=(0, 0))
-    min_x, min_y, max_x, max_y = text_geometry.bounds
-    text_geometry = translate_geometry(
-        text_geometry,
-        xoff=46.0 - (min_x + max_x) / 2,
-        yoff=12.5 - min_y,
-    )
+    def make_text(label, target_width, center_x, bottom_y):
+        text_path = TextPath((0, 0), label, size=1.0, prop=font)
+        geometry = None
+        for vertices in text_path.to_polygons():
+            polygon = Polygon(vertices).buffer(0)
+            if polygon.area <= 1e-6:
+                continue
+            geometry = polygon if geometry is None else geometry.symmetric_difference(polygon)
+        if geometry is None or geometry.is_empty:
+            raise RuntimeError(f"Could not construct RaptorVR lid lettering: {label}")
+        min_x, min_y, max_x, max_y = geometry.bounds
+        text_scale = target_width / (max_x - min_x)
+        geometry = translate_geometry(geometry, xoff=-min_x, yoff=-min_y)
+        geometry = scale_geometry(geometry, xfact=text_scale, yfact=text_scale, origin=(0, 0))
+        min_x, min_y, max_x, max_y = geometry.bounds
+        return translate_geometry(
+            geometry,
+            xoff=center_x - (min_x + max_x) / 2,
+            yoff=bottom_y - min_y,
+        )
+
+    raptor_text = make_text("RAPTOR", 31.0, 59.5, 31.0)
+    vr_text = make_text("VR", 10.5, 59.5, 22.5)
+    text_geometry = unary_union([raptor_text, vr_text])
     return mark, text_geometry
 
 
@@ -1047,8 +1053,10 @@ def validate_design(pads, npth, tracks, vias, meshes):
     report["checks"]["lid_logo"] = {
         "style": "raised",
         "relief_mm": 0.6,
-        "raptor_mark_height_mm": 28.0,
-        "small_text_width_mm": 28.0,
+        "raptor_mark_height_mm": 30.0,
+        "raptor_text_width_mm": 31.0,
+        "vr_text_width_mm": 10.5,
+        "layout": "text positioned inside the raptor grip",
         "minimum_recommended_nozzle_mm": 0.4,
     }
     report["checks"]["battery_pocket_mm"] = [64.0, 42.0, 12.0]
@@ -1075,7 +1083,7 @@ RaptorVR 1.0 is a **prototype** SlimeVR carrier and enclosure for the **ELEGOO E
 
 ## Important status
 
-This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.4 as a prototype and inspect it in a Gerber viewer before ordering.
+This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.5 as a prototype and inspect it in a Gerber viewer before ordering.
 
 ## Supported parts
 
@@ -1133,7 +1141,7 @@ Creality Print can import the STL files in `hardware/enclosure/`:
 - `RaptorVR_1_0_battery_separator_tray`: full insulating barrier between the LiPo and PCB, with PCB standoffs and a small wire slot.
 - `RaptorVR_1_0_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes, a 0.20 mm-per-side alignment plug, and the centered raised RaptorVR logo.
 
-The supplied raptor mark is embossed 0.6 mm above the lid. The mark is 28 mm tall, with smaller 28 mm-wide `RAPTOR VR` lettering beneath it. For a contrasting logo, add a filament change for the final three 0.20 mm layers; a single-color print also works.
+The supplied raptor mark is embossed 0.6 mm above the lid. The 30 mm-tall hand sits to the left and visually grips the lettering, matching the supplied reference: 31 mm-wide `RAPTOR` on top with a smaller 10.5 mm-wide `VR` beneath it. For a contrasting logo, add a filament change for the final three 0.20 mm layers; a single-color print also works.
 
 Use four **M3 x 10 mm thread-forming/self-tapping pan-head screws for plastic**. The case has 2.6 mm blind pilot holes, so the screw tips cannot reach the PCB or battery. Tighten only until the lid is seated; overtightening can strip printed threads. Do not use screws longer than 10 mm unless you first verify the remaining boss depth.
 
@@ -1225,7 +1233,7 @@ def main():
     (source_assets / "RaptorVR_logo_reference.png").write_bytes(LOGO_PNG_BYTES)
     design = {
         "name": "RaptorVR 1.0",
-        "revision": "0.4-prototype-logo-lid",
+        "revision": "0.5-prototype-gripped-logo-lid",
         "board_mm": [BOARD_W, BOARD_H, 1.0],
         "components": [{"ref": c.ref, "value": c.value, "outline": c.outline} for c in components],
         "pads": [p.__dict__ for p in pads],
