@@ -19,6 +19,13 @@
       "case_blind_pilot_mm": 2.6,
       "minimum_thread_engagement_mm": 8.0
     },
+    "body_strap_mount": {
+      "rail_quantity": 2,
+      "strap_width_mm": 50.0,
+      "passage_width_mm": 50.5,
+      "passage_height_mm": 2.2,
+      "recommended_material": "adjustable elastic or nylon webbing with buckle; do not print the strap in resin"
+    },
     "lid_logo": {
       "style": "raised",
       "relief_mm": 0.8,
