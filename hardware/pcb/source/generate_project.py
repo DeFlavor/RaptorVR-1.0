@@ -16,7 +16,6 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.font_manager import FontProperties
 from matplotlib.patches import Circle, FancyBboxPatch, Rectangle
 from matplotlib.path import Path as MplPath
 from matplotlib.textpath import TextPath
@@ -711,7 +710,7 @@ def schematic_drawing():
     ax.plot([13.02, 13.38], [5.76, 5.76], color="#334155", lw=2)
     ax.plot([13.10, 13.30], [5.68, 5.68], color="#334155", lw=2)
     ax.text(8.0, 9.45, "RaptorVR 1.0 - ESP32 + MuMo Carrier", ha="center", fontsize=22, weight="bold", color="#4c1d95")
-    ax.text(8.0, 9.05, "Functional schematic and assembly map - revision 0.9 prototype", ha="center", fontsize=10, color="#475569")
+    ax.text(8.0, 9.05, "Functional schematic and assembly map - revision 0.10 prototype", ha="center", fontsize=10, color="#475569")
     ax.text(8.0, 0.35, "WARNING: verify every connection with a multimeter before attaching a LiPo. Never reverse BAT+ and BAT-.", ha="center", fontsize=9, color="#b91c1c", weight="bold")
     fig.tight_layout()
     fig.savefig(SCHEMATIC / "RaptorVR_1_0_schematic.pdf", bbox_inches="tight")
@@ -782,65 +781,40 @@ def iter_polygons(geometry):
 
 
 def centered_logo_geometry():
-    """Trace the supplied raptor mark and pair it with restrained small text."""
+    """Trace the complete supplied logo without substituting its font/layout."""
     rgb = np.asarray(Image.open(io.BytesIO(LOGO_PNG_BYTES)).convert("RGB"), dtype=np.int16)
-    channel_spread = rgb.max(axis=2) - rgb.min(axis=2)
-    # The image uses a near-neutral black mark and blue-green text. Selecting
-    # the largest neutral-dark contour isolates the supplied raptor symbol.
-    neutral_dark = (rgb.mean(axis=2) < 100) & (channel_spread < 25)
-    sampled = np.flipud(neutral_dark[::4, ::4]).astype(float)
+    # Both the black raptor mark and blue-green lettering are much darker than
+    # the off-white background. Trace them together so the exact supplied font,
+    # spacing, relative scale, and two-line RAPTOR/VR arrangement are retained.
+    artwork_mask = rgb.mean(axis=2) < 185
+    sampled = np.flipud(artwork_mask[::2, ::2]).astype(float)
     fig, ax = plt.subplots(figsize=(2, 2))
     contours = ax.contour(sampled, levels=[0.5]).allsegs[0]
     plt.close(fig)
-    candidates = []
+    artwork = None
     for vertices in contours:
         if len(vertices) < 4:
             continue
         candidate = Polygon(vertices).buffer(0)
-        if candidate.area > 2.0:
-            candidates.append(candidate)
-    if not candidates:
-        raise RuntimeError("Could not trace the supplied RaptorVR logo")
-    mark = max(candidates, key=lambda candidate: candidate.area)
-    mark = mark.simplify(0.45, preserve_topology=True).buffer(0.18, join_style=1)
-    min_x, min_y, max_x, max_y = mark.bounds
-    mark_scale = 30.0 / (max_y - min_y)
-    mark = translate_geometry(mark, xoff=-min_x, yoff=-min_y)
-    mark = scale_geometry(mark, xfact=mark_scale, yfact=mark_scale, origin=(0, 0))
-    min_x, min_y, max_x, max_y = mark.bounds
-    mark = translate_geometry(
-        mark,
-        xoff=33.0 - (min_x + max_x) / 2,
+        if candidate.area <= 1.0:
+            continue
+        artwork = candidate if artwork is None else artwork.symmetric_difference(candidate)
+    if artwork is None or artwork.is_empty:
+        raise RuntimeError("Could not trace the supplied RaptorVR logo artwork")
+    artwork = artwork.buffer(0).simplify(0.22, preserve_topology=True)
+    min_x, min_y, max_x, max_y = artwork.bounds
+    artwork_scale = 54.0 / (max_x - min_x)
+    artwork = translate_geometry(artwork, xoff=-min_x, yoff=-min_y)
+    artwork = scale_geometry(artwork, xfact=artwork_scale, yfact=artwork_scale, origin=(0, 0))
+    min_x, min_y, max_x, max_y = artwork.bounds
+    artwork = translate_geometry(
+        artwork,
+        xoff=46.0 - (min_x + max_x) / 2,
         yoff=30.0 - (min_y + max_y) / 2,
     )
-
-    # A bold condensed face stays legible with a 0.4 mm nozzle while keeping
-    # the requested lettering visually secondary. RAPTORVR sits on one line
-    # inside the open grip.
-    font = FontProperties(family="DejaVu Sans", weight="bold", stretch="condensed")
-    def make_text(label, target_width, center_x, bottom_y):
-        text_path = TextPath((0, 0), label, size=1.0, prop=font)
-        geometry = None
-        for vertices in text_path.to_polygons():
-            polygon = Polygon(vertices).buffer(0)
-            if polygon.area <= 1e-6:
-                continue
-            geometry = polygon if geometry is None else geometry.symmetric_difference(polygon)
-        if geometry is None or geometry.is_empty:
-            raise RuntimeError(f"Could not construct RaptorVR lid lettering: {label}")
-        min_x, min_y, max_x, max_y = geometry.bounds
-        text_scale = target_width / (max_x - min_x)
-        geometry = translate_geometry(geometry, xoff=-min_x, yoff=-min_y)
-        geometry = scale_geometry(geometry, xfact=text_scale, yfact=text_scale, origin=(0, 0))
-        min_x, min_y, max_x, max_y = geometry.bounds
-        return translate_geometry(
-            geometry,
-            xoff=center_x - (min_x + max_x) / 2,
-            yoff=bottom_y - min_y,
-        )
-
-    text_geometry = make_text("RAPTORVR", 26.0, 58.0, 28.0)
-    return mark, text_geometry
+    # Keep the existing two-geometry interface; all source artwork is carried
+    # in the first geometry and the second is intentionally empty.
+    return artwork, Polygon()
 
 
 def logo_meshes(mark, text_geometry):
@@ -873,7 +847,7 @@ def lid_logo_preview(width, depth, screw_centers, mark, text_geometry):
     ax.set_ylim(-7, depth + 7)
     ax.set_aspect("equal")
     ax.set_axis_off()
-    ax.set_title("RaptorVR 1.0 screw lid - raised logo preview", fontsize=17, weight="bold")
+    ax.set_title("RaptorVR 1.0 screw lid - supplied artwork preview", fontsize=17, weight="bold")
     fig.savefig(PREVIEWS / "lid_logo_top.png", dpi=180, bbox_inches="tight", facecolor="#f8fafc")
     plt.close(fig)
 
@@ -1051,9 +1025,10 @@ def validate_design(pads, npth, tracks, vias, meshes):
     report["checks"]["lid_logo"] = {
         "style": "raised",
         "relief_mm": 0.8,
-        "raptor_mark_height_mm": 30.0,
-        "raptor_vr_text_width_mm": 26.0,
-        "layout": "RAPTORVR with no space on one line inside the raptor grip",
+        "source_artwork_width_mm": 54.0,
+        "font_geometry": "traced directly from supplied image; no substitute font",
+        "layout": "original supplied mark, RAPTOR line, and VR line preserved proportionally",
+        "uniform_scaling": True,
         "minimum_recommended_nozzle_mm": 0.4,
     }
     report["checks"]["battery_pocket_mm"] = [64.0, 42.0, 12.0]
@@ -1080,7 +1055,7 @@ RaptorVR 1.0 is a **prototype** SlimeVR carrier and enclosure for the **ELEGOO E
 
 ## Important status
 
-This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.9 as a prototype and inspect it in a Gerber viewer before ordering.
+This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.10 as a prototype and inspect it in a Gerber viewer before ordering.
 
 ## Supported parts
 
@@ -1138,7 +1113,7 @@ Creality Print can import the STL files in `hardware/enclosure/`:
 - `RaptorVR_1_0_battery_separator_tray`: full insulating barrier between the LiPo and PCB, with PCB standoffs and a small wire slot.
 - `RaptorVR_1_0_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes, a 0.20 mm-per-side alignment plug, and the centered raised RaptorVR logo.
 
-The supplied raptor mark is embossed 0.8 mm above the lid for clear resin and FDM visibility. The 30 mm-tall hand sits to the left and visually grips a restrained, 26 mm-wide `RAPTORVR` line with no space. For a contrasting FDM logo, add a filament change for the final four 0.20 mm layers; a single-color print also works. For resin, angle the lid approximately 20-30 degrees and place supports on the inside face so the raised logo remains clean.
+The complete supplied logo image is traced directly into the lid—raptor mark, original lettering shapes, spacing, and the original `RAPTOR`/`VR` two-line arrangement. No substitute font is used. The artwork is scaled uniformly to 54 mm wide and embossed 0.8 mm above the lid for clear resin and FDM visibility. For a contrasting FDM logo, add a filament change for the final four 0.20 mm layers; a single-color print also works. For resin, angle the lid approximately 20-30 degrees and place supports on the inside face so the raised logo remains clean.
 
 Use four **M3 x 10 mm thread-forming/self-tapping pan-head screws for plastic**. The case has 2.6 mm blind pilot holes, so the screw tips cannot reach the PCB or battery. Tighten only until the lid is seated; overtightening can strip printed threads. Do not use screws longer than 10 mm unless you first verify the remaining boss depth.
 
@@ -1230,7 +1205,7 @@ def main():
     (source_assets / "RaptorVR_logo_reference.png").write_bytes(LOGO_PNG_BYTES)
     design = {
         "name": "RaptorVR 1.0",
-        "revision": "0.9-prototype-resin-visible-logo",
+        "revision": "0.10-prototype-exact-source-logo",
         "board_mm": [BOARD_W, BOARD_H, 1.0],
         "components": [{"ref": c.ref, "value": c.value, "outline": c.outline} for c in components],
         "pads": [p.__dict__ for p in pads],

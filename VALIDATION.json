@@ -22,9 +22,10 @@
     "lid_logo": {
       "style": "raised",
       "relief_mm": 0.8,
-      "raptor_mark_height_mm": 30.0,
-      "raptor_vr_text_width_mm": 26.0,
-      "layout": "RAPTORVR with no space on one line inside the raptor grip",
+      "source_artwork_width_mm": 54.0,
+      "font_geometry": "traced directly from supplied image; no substitute font",
+      "layout": "original supplied mark, RAPTOR line, and VR line preserved proportionally",
+      "uniform_scaling": true,
       "minimum_recommended_nozzle_mm": 0.4
     },
     "battery_pocket_mm": [
