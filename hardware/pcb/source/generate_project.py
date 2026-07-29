@@ -711,7 +711,7 @@ def schematic_drawing():
     ax.plot([13.02, 13.38], [5.76, 5.76], color="#334155", lw=2)
     ax.plot([13.10, 13.30], [5.68, 5.68], color="#334155", lw=2)
     ax.text(8.0, 9.45, "RaptorVR 1.0 - ESP32 + MuMo Carrier", ha="center", fontsize=22, weight="bold", color="#4c1d95")
-    ax.text(8.0, 9.05, "Functional schematic and assembly map - revision 0.8 prototype", ha="center", fontsize=10, color="#475569")
+    ax.text(8.0, 9.05, "Functional schematic and assembly map - revision 0.9 prototype", ha="center", fontsize=10, color="#475569")
     ax.text(8.0, 0.35, "WARNING: verify every connection with a multimeter before attaching a LiPo. Never reverse BAT+ and BAT-.", ha="center", fontsize=9, color="#b91c1c", weight="bold")
     fig.tight_layout()
     fig.savefig(SCHEMATIC / "RaptorVR_1_0_schematic.pdf", bbox_inches="tight")
@@ -846,7 +846,7 @@ def centered_logo_geometry():
 def logo_meshes(mark, text_geometry):
     meshes = []
     for polygon in list(iter_polygons(mark)) + list(iter_polygons(text_geometry)):
-        mesh = trimesh.creation.extrude_polygon(polygon, 0.64)
+        mesh = trimesh.creation.extrude_polygon(polygon, 0.84)
         mesh.apply_translation([0, 0, 1.96])
         meshes.append(mesh)
     return meshes
@@ -1050,7 +1050,7 @@ def validate_design(pads, npth, tracks, vias, meshes):
     }
     report["checks"]["lid_logo"] = {
         "style": "raised",
-        "relief_mm": 0.6,
+        "relief_mm": 0.8,
         "raptor_mark_height_mm": 30.0,
         "raptor_vr_text_width_mm": 26.0,
         "layout": "RAPTORVR with no space on one line inside the raptor grip",
@@ -1080,7 +1080,7 @@ RaptorVR 1.0 is a **prototype** SlimeVR carrier and enclosure for the **ELEGOO E
 
 ## Important status
 
-This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.8 as a prototype and inspect it in a Gerber viewer before ordering.
+This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.9 as a prototype and inspect it in a Gerber viewer before ordering.
 
 ## Supported parts
 
@@ -1138,7 +1138,7 @@ Creality Print can import the STL files in `hardware/enclosure/`:
 - `RaptorVR_1_0_battery_separator_tray`: full insulating barrier between the LiPo and PCB, with PCB standoffs and a small wire slot.
 - `RaptorVR_1_0_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes, a 0.20 mm-per-side alignment plug, and the centered raised RaptorVR logo.
 
-The supplied raptor mark is embossed 0.6 mm above the lid. The 30 mm-tall hand sits to the left and visually grips a restrained, 26 mm-wide `RAPTORVR` line with no space. For a contrasting logo, add a filament change for the final three 0.20 mm layers; a single-color print also works.
+The supplied raptor mark is embossed 0.8 mm above the lid for clear resin and FDM visibility. The 30 mm-tall hand sits to the left and visually grips a restrained, 26 mm-wide `RAPTORVR` line with no space. For a contrasting FDM logo, add a filament change for the final four 0.20 mm layers; a single-color print also works. For resin, angle the lid approximately 20-30 degrees and place supports on the inside face so the raised logo remains clean.
 
 Use four **M3 x 10 mm thread-forming/self-tapping pan-head screws for plastic**. The case has 2.6 mm blind pilot holes, so the screw tips cannot reach the PCB or battery. Tighten only until the lid is seated; overtightening can strip printed threads. Do not use screws longer than 10 mm unless you first verify the remaining boss depth.
 
@@ -1230,7 +1230,7 @@ def main():
     (source_assets / "RaptorVR_logo_reference.png").write_bytes(LOGO_PNG_BYTES)
     design = {
         "name": "RaptorVR 1.0",
-        "revision": "0.8-prototype-no-space-logo-text",
+        "revision": "0.9-prototype-resin-visible-logo",
         "board_mm": [BOARD_W, BOARD_H, 1.0],
         "components": [{"ref": c.ref, "value": c.value, "outline": c.outline} for c in components],
         "pads": [p.__dict__ for p in pads],

@@ -10,7 +10,7 @@ RaptorVR 1.0 is a **prototype** SlimeVR carrier and enclosure for the **ELEGOO E
 
 ## Important status
 
-This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.8 as a prototype and inspect it in a Gerber viewer before ordering.
+This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.9 as a prototype and inspect it in a Gerber viewer before ordering.
 
 ## Supported parts
 
@@ -68,7 +68,7 @@ Creality Print can import the STL files in `hardware/enclosure/`:
 - `RaptorVR_1_0_battery_separator_tray`: full insulating barrier between the LiPo and PCB, with PCB standoffs and a small wire slot.
 - `RaptorVR_1_0_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes, a 0.20 mm-per-side alignment plug, and the centered raised RaptorVR logo.
 
-The supplied raptor mark is embossed 0.6 mm above the lid. The 30 mm-tall hand sits to the left and visually grips a restrained, 26 mm-wide `RAPTORVR` line with no space. For a contrasting logo, add a filament change for the final three 0.20 mm layers; a single-color print also works.
+The supplied raptor mark is embossed 0.8 mm above the lid for clear resin and FDM visibility. The 30 mm-tall hand sits to the left and visually grips a restrained, 26 mm-wide `RAPTORVR` line with no space. For a contrasting FDM logo, add a filament change for the final four 0.20 mm layers; a single-color print also works. For resin, angle the lid approximately 20-30 degrees and place supports on the inside face so the raised logo remains clean.
 
 Use four **M3 x 10 mm thread-forming/self-tapping pan-head screws for plastic**. The case has 2.6 mm blind pilot holes, so the screw tips cannot reach the PCB or battery. Tighten only until the lid is seated; overtightening can strip printed threads. Do not use screws longer than 10 mm unless you first verify the remaining boss depth.
 

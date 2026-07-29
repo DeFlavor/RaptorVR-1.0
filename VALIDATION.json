@@ -21,7 +21,7 @@
     },
     "lid_logo": {
       "style": "raised",
-      "relief_mm": 0.6,
+      "relief_mm": 0.8,
       "raptor_mark_height_mm": 30.0,
       "raptor_vr_text_width_mm": 26.0,
       "layout": "RAPTORVR with no space on one line inside the raptor grip",

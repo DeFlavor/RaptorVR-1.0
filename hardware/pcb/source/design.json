@@ -1,6 +1,6 @@
 {
   "name": "RaptorVR 1.0",
-  "revision": "0.8-prototype-no-space-logo-text",
+  "revision": "0.9-prototype-resin-visible-logo",
   "board_mm": [
     86.36,
     53.34,
