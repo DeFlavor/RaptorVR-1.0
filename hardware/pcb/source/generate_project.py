@@ -710,7 +710,7 @@ def schematic_drawing():
     ax.plot([13.02, 13.38], [5.76, 5.76], color="#334155", lw=2)
     ax.plot([13.10, 13.30], [5.68, 5.68], color="#334155", lw=2)
     ax.text(8.0, 9.45, "RaptorVR 1.0 - ESP32 + MuMo Carrier", ha="center", fontsize=22, weight="bold", color="#4c1d95")
-    ax.text(8.0, 9.05, "Functional schematic and assembly map - revision 0.11 prototype", ha="center", fontsize=10, color="#475569")
+    ax.text(8.0, 9.05, "Functional schematic and assembly map - revision 0.12 prototype", ha="center", fontsize=10, color="#475569")
     ax.text(8.0, 0.35, "WARNING: verify every connection with a multimeter before attaching a LiPo. Never reverse BAT+ and BAT-.", ha="center", fontsize=9, color="#b91c1c", weight="bold")
     fig.tight_layout()
     fig.savefig(SCHEMATIC / "RaptorVR_1_0_schematic.pdf", bbox_inches="tight")
@@ -856,7 +856,15 @@ def export_chassis_viewers(case, tray, lid, case_height):
     """Export accurate colored GLB scenes for orbit/zoom web viewing."""
     def colored_copy(mesh, rgba):
         copy = mesh.copy()
-        copy.visual.face_colors = np.tile(np.asarray(rgba, dtype=np.uint8), (len(copy.faces), 1))
+        copy.visual = trimesh.visual.TextureVisuals(
+            material=trimesh.visual.material.PBRMaterial(
+                baseColorFactor=np.asarray(rgba, dtype=np.uint8),
+                metallicFactor=0.0,
+                roughnessFactor=0.68,
+            )
+        )
+        # glTF uses metres; the source enclosure geometry is authored in mm.
+        copy.apply_scale(0.001)
         return copy
 
     parts = {
@@ -868,11 +876,11 @@ def export_chassis_viewers(case, tray, lid, case_height):
     assembled.add_geometry(parts["case"], geom_name="case", node_name="case")
     assembled.add_geometry(
         parts["separator"], geom_name="separator", node_name="separator",
-        transform=trimesh.transformations.translation_matrix([0, 0, 14.6]),
+        transform=trimesh.transformations.translation_matrix([0, 0, 0.0146]),
     )
     assembled.add_geometry(
         parts["logo_lid"], geom_name="logo_lid", node_name="logo_lid",
-        transform=trimesh.transformations.translation_matrix([0, 0, case_height]),
+        transform=trimesh.transformations.translation_matrix([0, 0, case_height * 0.001]),
     )
     (PRINTABLES / "RaptorVR_1_0_chassis_assembled.glb").write_bytes(assembled.export(file_type="glb"))
 
@@ -880,11 +888,11 @@ def export_chassis_viewers(case, tray, lid, case_height):
     exploded.add_geometry(parts["case"], geom_name="case", node_name="case")
     exploded.add_geometry(
         parts["separator"], geom_name="separator", node_name="separator",
-        transform=trimesh.transformations.translation_matrix([0, 0, 39.0]),
+        transform=trimesh.transformations.translation_matrix([0, 0, 0.039]),
     )
     exploded.add_geometry(
         parts["logo_lid"], geom_name="logo_lid", node_name="logo_lid",
-        transform=trimesh.transformations.translation_matrix([0, 0, 64.0]),
+        transform=trimesh.transformations.translation_matrix([0, 0, 0.064]),
     )
     (PRINTABLES / "RaptorVR_1_0_chassis_exploded.glb").write_bytes(exploded.export(file_type="glb"))
 
@@ -1098,7 +1106,7 @@ RaptorVR 1.0 is a **prototype** SlimeVR carrier and enclosure for the **ELEGOO E
 
 ## Important status
 
-This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.11 as a prototype and inspect it in a Gerber viewer before ordering.
+This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.12 as a prototype and inspect it in a Gerber viewer before ordering.
 
 ## Supported parts
 
@@ -1249,7 +1257,7 @@ def main():
     (source_assets / "RaptorVR_logo_reference.png").write_bytes(LOGO_PNG_BYTES)
     design = {
         "name": "RaptorVR 1.0",
-        "revision": "0.11-prototype-interactive-viewer",
+        "revision": "0.12-prototype-interactive-viewer",
         "board_mm": [BOARD_W, BOARD_H, 1.0],
         "components": [{"ref": c.ref, "value": c.value, "outline": c.outline} for c in components],
         "pads": [p.__dict__ for p in pads],
