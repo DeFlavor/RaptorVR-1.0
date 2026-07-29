@@ -24,6 +24,8 @@
       "strap_width_mm": 50.0,
       "passage_width_mm": 50.5,
       "passage_height_mm": 2.2,
+      "strap_travel_axis": "across 60 mm short side",
+      "worn_chassis_orientation": "92 mm long side vertical",
       "recommended_material": "adjustable elastic or nylon webbing with buckle; do not print the strap in resin"
     },
     "lid_logo": {

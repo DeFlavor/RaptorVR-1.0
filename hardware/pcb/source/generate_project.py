@@ -631,7 +631,7 @@ def write_bom_and_pinout(components, pads):
             ("SW1", 1, "SK12D07/SK12D07VG high-3mm", "SPDT, 2.54 mm pin pitch", "Center common"),
             ("J3", 1, "503759 3.7 V protected LiPo", "Bare red/black leads to large pads", "Verify polarity before soldering"),
             ("Headers", 1, "2.54 mm male/female header assortment", "For ESP32, MuMo, TP4056", "Trim flush under PCB"),
-            ("STRAP", 1, "50 mm (2-inch) adjustable elastic or nylon body strap with buckle", "1.0-2.0 mm thick webbing; choose a length for the intended body location", "Thread beneath both reinforced underside rails"),
+            ("STRAP", 1, "50 mm (2-inch) adjustable elastic or nylon body strap with buckle", "1.0-2.0 mm thick webbing; choose a length for the intended body location", "Thread beneath both rails so the chassis long side is vertical"),
         ]
         w.writerows(rows)
     with (PCB / "pinout.csv").open("w", newline="", encoding="utf-8") as f:
@@ -946,11 +946,13 @@ def enclosure_models():
     switch_cut = trimesh.creation.box([6.0, 12.0, 6.0]); switch_cut.apply_translation([91.0, 21.0, 19.5])
     case = trimesh.boolean.difference([case, esp_cut, charge_cut, switch_cut], engine="manifold")
 
-    # Meow-inspired 50 mm strap rails on the underside.
+    # Meow-inspired 50 mm strap rails on the underside, rotated so the strap
+    # travels across the short case direction and the 92 mm chassis axis is
+    # vertical when worn. The 50.5 x 2.2 mm tunnels fit common 2-inch webbing.
     rails = []
-    for x in (8.0, 80.0):
-        rail = trimesh.creation.box([4.0, 54.0, 4.0]); rail.apply_translation([x + 2.0, 30.0, -1.0])
-        slot = trimesh.creation.box([6.0, 50.5, 2.2]); slot.apply_translation([x + 2.0, 30.0, -1.0])
+    for y in (6.0, 50.0):
+        rail = trimesh.creation.box([54.0, 4.0, 4.0]); rail.apply_translation([46.0, y + 2.0, -1.0])
+        slot = trimesh.creation.box([50.5, 6.0, 2.2]); slot.apply_translation([46.0, y + 2.0, -1.0])
         rails.append(trimesh.boolean.difference([rail, slot], engine="manifold"))
     case = trimesh.boolean.union([case] + rails, engine="manifold")
     export_mesh(case, "RaptorVR_1_0_case_50mm_strap")
@@ -1075,6 +1077,8 @@ def validate_design(pads, npth, tracks, vias, meshes):
         "strap_width_mm": 50.0,
         "passage_width_mm": 50.5,
         "passage_height_mm": 2.2,
+        "strap_travel_axis": "across 60 mm short side",
+        "worn_chassis_orientation": "92 mm long side vertical",
         "recommended_material": "adjustable elastic or nylon webbing with buckle; do not print the strap in resin",
     }
     report["checks"]["lid_logo"] = {
@@ -1169,7 +1173,7 @@ Battery monitoring uses GPIO36/VP and these firmware values, in kOhm:
 
 Creality Print can import the STL files in `hardware/enclosure/`:
 
-- `RaptorVR_1_0_case_50mm_strap`: rounded chassis with ESP32 USB-C, charger USB-C, switch openings, four reinforced screw bosses, and two reinforced underside rails for a 50 mm body strap.
+- `RaptorVR_1_0_case_50mm_strap`: rounded chassis with ESP32 USB-C, charger USB-C, switch openings, four reinforced screw bosses, and two reinforced underside rails rotated so its 92 mm long side is vertical when worn with a 50 mm body strap.
 - `RaptorVR_1_0_battery_separator_tray`: full insulating barrier between the LiPo and PCB, with PCB standoffs and a small wire slot.
 - `RaptorVR_1_0_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes, a 0.20 mm-per-side alignment plug, and the centered raised RaptorVR logo.
 - `RaptorVR_1_0_chassis_assembled.glb` and `RaptorVR_1_0_chassis_exploded.glb`: accurate colored models for interactive orbit and zoom viewing.
@@ -1178,7 +1182,7 @@ The complete supplied logo image is traced directly into the lid—raptor mark, 
 
 Use four **M3 x 10 mm thread-forming/self-tapping pan-head screws for plastic**. The case has 2.6 mm blind pilot holes, so the screw tips cannot reach the PCB or battery. Tighten only until the lid is seated; overtightening can strip printed threads. Do not use screws longer than 10 mm unless you first verify the remaining boss depth.
 
-For body mounting, thread one **50 mm (2-inch) elastic or nylon strap** beneath both underside rails, then add an adjustable side-release buckle or hook-and-loop closure. The passages are 50.5 mm wide and 2.2 mm high. Round or lightly sand any sharp printed edges before installing the strap, leave enough slack for comfortable movement and circulation, and inspect the strap and rails before each use. Do not resin-print the flexible strap itself.
+For vertical body mounting, thread one **50 mm (2-inch) elastic or nylon strap** beneath both underside rails, then add an adjustable side-release buckle or hook-and-loop closure. The rails are turned 90 degrees from the earlier layout: the strap travels across the 60 mm short side, leaving the 92 mm long side vertical on your body. The passages are 50.5 mm wide and 2.2 mm high. Round or lightly sand any sharp printed edges before installing the strap, leave enough slack for comfortable movement and circulation, and inspect the strap and rails before each use. Do not resin-print the flexible strap itself.
 
 Starting Creality settings: 0.4 mm nozzle, 0.20 mm layers, four walls, five top/bottom layers, 35% gyroid infill, PLA+ or PETG. Print the case upright, the separator flat, and the lid with its large outer face on the build plate. If your printer runs tight, scale only the lid X/Y to 100.2% or lightly sand the alignment plug.
 

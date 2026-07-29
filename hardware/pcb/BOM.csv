@@ -9,4 +9,4 @@ R3,1,100 kOhm 1/4 W,"Axial, 10.16 mm pitch",Battery divider lower
 SW1,1,SK12D07/SK12D07VG high-3mm,"SPDT, 2.54 mm pin pitch",Center common
 J3,1,503759 3.7 V protected LiPo,Bare red/black leads to large pads,Verify polarity before soldering
 Headers,1,2.54 mm male/female header assortment,"For ESP32, MuMo, TP4056",Trim flush under PCB
-STRAP,1,50 mm (2-inch) adjustable elastic or nylon body strap with buckle,1.0-2.0 mm thick webbing; choose a length for the intended body location,Thread beneath both reinforced underside rails
+STRAP,1,50 mm (2-inch) adjustable elastic or nylon body strap with buckle,1.0-2.0 mm thick webbing; choose a length for the intended body location,Thread beneath both rails so the chassis long side is vertical
