@@ -23,9 +23,8 @@
       "style": "raised",
       "relief_mm": 0.6,
       "raptor_mark_height_mm": 30.0,
-      "raptor_text_width_mm": 24.0,
-      "vr_text_width_mm": 8.0,
-      "layout": "text positioned inside the raptor grip",
+      "raptor_vr_text_width_mm": 26.0,
+      "layout": "RAPTOR VR on one line inside the raptor grip",
       "minimum_recommended_nozzle_mm": 0.4
     },
     "battery_pocket_mm": [
