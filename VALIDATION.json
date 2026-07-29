@@ -22,7 +22,12 @@
     "battery_pocket_mm": [
       64.0,
       42.0,
-      7.0
+      12.0
+    ],
+    "confirmed_battery_mm": [
+      52.0,
+      30.5,
+      11.0
     ]
   },
   "warnings": [

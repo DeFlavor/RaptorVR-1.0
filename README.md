@@ -8,7 +8,7 @@ RaptorVR 1.0 is a **prototype** SlimeVR carrier and enclosure for the **ELEGOO E
 
 ## Important status
 
-This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.2 as a prototype and inspect it in a Gerber viewer before ordering.
+This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.3 as a prototype and inspect it in a Gerber viewer before ordering.
 
 ## Supported parts
 
@@ -18,7 +18,7 @@ This package passed automated geometry, copper-clearance, Gerber-parsing, and wa
 - Two axial 1N5817 Schottky diodes.
 - 180 kOhm, 220 kOhm, and 100 kOhm 1/4 W resistors. The three-resistor divider matches the current SlimeVR `BOARD_WROOM32` defaults and feeds GPIO36/VP.
 - SK12D07/SK12D07VG high-3mm SPDT slide switch.
-- One protected 3.7 V, one-cell LiPo up to approximately 64 x 42 x 7 mm; 503759 fits.
+- One protected 3.7 V, one-cell LiPo up to approximately 64 x 42 x 12 mm. The confirmed 1500 mAh battery measures 52 x 30.5 x 11 mm and fits with clearance.
 
 ## JLCPCB files
 

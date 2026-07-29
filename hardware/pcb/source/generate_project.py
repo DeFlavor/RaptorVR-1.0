@@ -695,7 +695,7 @@ def schematic_drawing():
     ax.plot([13.02, 13.38], [5.76, 5.76], color="#334155", lw=2)
     ax.plot([13.10, 13.30], [5.68, 5.68], color="#334155", lw=2)
     ax.text(8.0, 9.45, "RaptorVR 1.0 - ESP32 + MuMo Carrier", ha="center", fontsize=22, weight="bold", color="#4c1d95")
-    ax.text(8.0, 9.05, "Functional schematic and assembly map - revision 0.2 prototype", ha="center", fontsize=10, color="#475569")
+    ax.text(8.0, 9.05, "Functional schematic and assembly map - revision 0.3 prototype", ha="center", fontsize=10, color="#475569")
     ax.text(8.0, 0.35, "WARNING: verify every connection with a multimeter before attaching a LiPo. Never reverse BAT+ and BAT-.", ha="center", fontsize=9, color="#b91c1c", weight="bold")
     fig.tight_layout()
     fig.savefig(SCHEMATIC / "RaptorVR_1_0_schematic.pdf", bbox_inches="tight")
@@ -755,10 +755,11 @@ def export_mesh(mesh: trimesh.Trimesh, basename: str):
 
 def enclosure_models():
     PRINTABLES.mkdir(parents=True, exist_ok=True)
-    # Overall body is intentionally larger than meowCarrier to fit the 52 mm ESP32 board.
-    W, D, H = 92.0, 60.0, 24.0
+    # Overall body is intentionally larger than meowCarrier to fit the 52 mm
+    # ESP32 board and the user's 11 x 30.5 x 52 mm, 1500 mAh LiPo.
+    W, D, H = 92.0, 60.0, 29.0
     outer = rounded_box_mesh(W, D, H, 6.0)
-    cavity = rounded_box_mesh(88.0, 56.0, 22.5, 4.2, z0=2.0)
+    cavity = rounded_box_mesh(88.0, 56.0, H - 1.5, 4.2, z0=2.0)
     cavity.apply_translation([2.0, 2.0, 0])
     case = trimesh.boolean.difference([outer, cavity], engine="manifold")
 
@@ -778,7 +779,7 @@ def enclosure_models():
     screw_pilots = []
     for sx, sy in screw_centers:
         pilot = trimesh.creation.cylinder(radius=1.30, height=11.0, sections=40)
-        pilot.apply_translation([sx, sy, 19.5])
+        pilot.apply_translation([sx, sy, H - 4.5])
         screw_pilots.append(pilot)
     case = trimesh.boolean.difference([case] + screw_pilots, engine="manifold")
 
@@ -790,14 +791,14 @@ def enclosure_models():
         ribs.append(b)
     for x, y, sx, sy in [(2, 2, 3, 56), (87, 2, 3, 56), (5, 2, 82, 3), (5, 55, 82, 3)]:
         b = trimesh.creation.box([sx, sy, 1.2])
-        b.apply_translation([x + sx / 2, y + sy / 2, 9.0])
+        b.apply_translation([x + sx / 2, y + sy / 2, 14.0])
         ribs.append(b)
     case = trimesh.boolean.union([case] + ribs, engine="manifold")
 
     # Openings: ESP32 USB-C at front, TP4056 USB-C and switch at right.
-    esp_cut = trimesh.creation.box([16.0, 6.0, 8.0]); esp_cut.apply_translation([20.0, 1.0, 15.0])
-    charge_cut = trimesh.creation.box([6.0, 14.0, 8.0]); charge_cut.apply_translation([91.0, 44.0, 15.0])
-    switch_cut = trimesh.creation.box([6.0, 12.0, 6.0]); switch_cut.apply_translation([91.0, 21.0, 14.5])
+    esp_cut = trimesh.creation.box([16.0, 6.0, 8.0]); esp_cut.apply_translation([20.0, 1.0, 20.0])
+    charge_cut = trimesh.creation.box([6.0, 14.0, 8.0]); charge_cut.apply_translation([91.0, 44.0, 20.0])
+    switch_cut = trimesh.creation.box([6.0, 12.0, 6.0]); switch_cut.apply_translation([91.0, 21.0, 19.5])
     case = trimesh.boolean.difference([case, esp_cut, charge_cut, switch_cut], engine="manifold")
 
     # Meow-inspired 50 mm strap rails on the underside.
@@ -919,7 +920,8 @@ def validate_design(pads, npth, tracks, vias, meshes):
         "case_blind_pilot_mm": 2.6,
         "minimum_thread_engagement_mm": 8.0,
     }
-    report["checks"]["battery_pocket_mm"] = [64.0, 42.0, 7.0]
+    report["checks"]["battery_pocket_mm"] = [64.0, 42.0, 12.0]
+    report["checks"]["confirmed_battery_mm"] = [52.0, 30.5, 11.0]
     report["warnings"].extend([
         "Prototype hardware: electrical operation has not been bench-tested on a physical PCB.",
         "Confirm the exact TP4056 module pad order and size before ordering; clone modules vary.",
@@ -940,7 +942,7 @@ RaptorVR 1.0 is a **prototype** SlimeVR carrier and enclosure for the **ELEGOO E
 
 ## Important status
 
-This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.2 as a prototype and inspect it in a Gerber viewer before ordering.
+This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.3 as a prototype and inspect it in a Gerber viewer before ordering.
 
 ## Supported parts
 
@@ -950,7 +952,7 @@ This package passed automated geometry, copper-clearance, Gerber-parsing, and wa
 - Two axial 1N5817 Schottky diodes.
 - 180 kOhm, 220 kOhm, and 100 kOhm 1/4 W resistors. The three-resistor divider matches the current SlimeVR `BOARD_WROOM32` defaults and feeds GPIO36/VP.
 - SK12D07/SK12D07VG high-3mm SPDT slide switch.
-- One protected 3.7 V, one-cell LiPo up to approximately 64 x 42 x 7 mm; 503759 fits.
+- One protected 3.7 V, one-cell LiPo up to approximately 64 x 42 x 12 mm. The confirmed 1500 mAh battery measures 52 x 30.5 x 11 mm and fits with clearance.
 
 ## JLCPCB files
 
@@ -1084,7 +1086,7 @@ def main():
     shutil.copy2(Path(__file__), SOURCE / "generate_project.py")
     design = {
         "name": "RaptorVR 1.0",
-        "revision": "0.2-prototype-screw-lid",
+        "revision": "0.3-prototype-1500mah-battery",
         "board_mm": [BOARD_W, BOARD_H, 1.0],
         "components": [{"ref": c.ref, "value": c.value, "outline": c.outline} for c in components],
         "pads": [p.__dict__ for p in pads],
