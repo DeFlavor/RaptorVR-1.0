@@ -1,0 +1,26 @@
+{
+  "board_mm": [
+    86.36,
+    53.34
+  ],
+  "checks": {
+    "all_pads_inside_outline": true,
+    "F.Cu_clearance_0.25_mm": true,
+    "B.Cu_clearance_0.25_mm": true,
+    "routed_net_count": 14,
+    "via_count": 6,
+    "track_segment_count": 84,
+    "all_stl_meshes_watertight": true,
+    "lid_xy_clearance_mm": 0.2,
+    "battery_pocket_mm": [
+      64.0,
+      42.0,
+      7.0
+    ]
+  },
+  "warnings": [
+    "Prototype hardware: electrical operation has not been bench-tested on a physical PCB.",
+    "Confirm the exact TP4056 module pad order and size before ordering; clone modules vary.",
+    "Measure your ELEGOO board and battery before printing; vendor dimensions can vary by batch."
+  ]
+}

@@ -1,0 +1,9 @@
+Function,ESP32 pin,MuMo pin,Notes
+SPI SCLK / I2C SCL,GPIO18,J1.4 SCL,24 MHz SPI preferred; same wire can be I2C SCL
+SPI MOSI / I2C SDA,GPIO23,J1.5 SDA,Same wire can be I2C SDA
+SPI MISO,GPIO19,J1.7 SDO,Used in SPI mode
+SPI CS,GPIO5,J1.6 CS,Used in SPI mode
+Interrupt,GPIO17,J2.3 INT1,Custom firmware pin
+Battery ADC,GPIO36 / VP,-,180k + 220k over 100k divider
+Module power,3V3,J1.2 3V3,Do not power MuMo from 5V
+Ground,GND,J1.3 GND,Common ground

@@ -1,0 +1,1575 @@
+{
+  "name": "PurrTrack32",
+  "revision": "0.1-prototype",
+  "board_mm": [
+    86.36,
+    53.34,
+    1.0
+  ],
+  "components": [
+    {
+      "ref": "U1",
+      "value": "ELEGOO ESP-WROOM-32 USB-C 30-pin",
+      "outline": [
+        5.08,
+        5.08,
+        35.56,
+        49.53
+      ]
+    },
+    {
+      "ref": "U2",
+      "value": "MuMo V1.1 ICM-45686 + QMC6309",
+      "outline": [
+        46.228,
+        13.97,
+        65.278,
+        28.702
+      ]
+    },
+    {
+      "ref": "U3",
+      "value": "TP4056 USB-C protected module",
+      "outline": [
+        57.15,
+        36.322,
+        83.058,
+        52.578
+      ]
+    },
+    {
+      "ref": "D1",
+      "value": "1N5817",
+      "outline": [
+        64.008,
+        30.226,
+        76.708,
+        32.258
+      ]
+    },
+    {
+      "ref": "D2",
+      "value": "1N5817",
+      "outline": [
+        64.008,
+        25.654,
+        76.708,
+        27.686
+      ]
+    },
+    {
+      "ref": "R1",
+      "value": "180k 1/4W",
+      "outline": [
+        37.084,
+        45.212,
+        49.276,
+        47.244
+      ]
+    },
+    {
+      "ref": "R2",
+      "value": "220k 1/4W",
+      "outline": [
+        49.53,
+        33.02,
+        51.562,
+        45.212
+      ]
+    },
+    {
+      "ref": "R3",
+      "value": "100k 1/4W",
+      "outline": [
+        37.338,
+        30.988,
+        49.53,
+        33.02
+      ]
+    },
+    {
+      "ref": "SW1",
+      "value": "SK12D07VG3 high-3mm",
+      "outline": [
+        72.644,
+        15.748,
+        82.296,
+        20.828
+      ]
+    },
+    {
+      "ref": "J3",
+      "value": "LiPo wire pads",
+      "outline": [
+        66.802,
+        6.096,
+        77.978,
+        10.16
+      ]
+    }
+  ],
+  "pads": [
+    {
+      "ref": "U1",
+      "pin": "L1",
+      "x": 7.62,
+      "y": 8.89,
+      "net": "SYS_5V",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "VIN"
+    },
+    {
+      "ref": "U1",
+      "pin": "L2",
+      "x": 7.62,
+      "y": 11.43,
+      "net": "GND",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GND"
+    },
+    {
+      "ref": "U1",
+      "pin": "L3",
+      "x": 7.62,
+      "y": 13.97,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO13"
+    },
+    {
+      "ref": "U1",
+      "pin": "L4",
+      "x": 7.62,
+      "y": 16.51,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO12"
+    },
+    {
+      "ref": "U1",
+      "pin": "L5",
+      "x": 7.62,
+      "y": 19.05,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO14"
+    },
+    {
+      "ref": "U1",
+      "pin": "L6",
+      "x": 7.62,
+      "y": 21.59,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO27"
+    },
+    {
+      "ref": "U1",
+      "pin": "L7",
+      "x": 7.62,
+      "y": 24.13,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO26"
+    },
+    {
+      "ref": "U1",
+      "pin": "L8",
+      "x": 7.62,
+      "y": 26.67,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO25"
+    },
+    {
+      "ref": "U1",
+      "pin": "L9",
+      "x": 7.62,
+      "y": 29.21,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO33"
+    },
+    {
+      "ref": "U1",
+      "pin": "L10",
+      "x": 7.62,
+      "y": 31.75,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO32"
+    },
+    {
+      "ref": "U1",
+      "pin": "L11",
+      "x": 7.62,
+      "y": 34.29,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO35"
+    },
+    {
+      "ref": "U1",
+      "pin": "L12",
+      "x": 7.62,
+      "y": 36.83,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO34"
+    },
+    {
+      "ref": "U1",
+      "pin": "L13",
+      "x": 7.62,
+      "y": 39.37,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO39"
+    },
+    {
+      "ref": "U1",
+      "pin": "L14",
+      "x": 7.62,
+      "y": 41.91,
+      "net": "ADC_BAT",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO36"
+    },
+    {
+      "ref": "U1",
+      "pin": "L15",
+      "x": 7.62,
+      "y": 44.45,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "EN"
+    },
+    {
+      "ref": "U1",
+      "pin": "R1",
+      "x": 33.02,
+      "y": 8.89,
+      "net": "3V3",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "3V3"
+    },
+    {
+      "ref": "U1",
+      "pin": "R2",
+      "x": 33.02,
+      "y": 11.43,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO15"
+    },
+    {
+      "ref": "U1",
+      "pin": "R3",
+      "x": 33.02,
+      "y": 13.97,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO2"
+    },
+    {
+      "ref": "U1",
+      "pin": "R4",
+      "x": 33.02,
+      "y": 16.51,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO0"
+    },
+    {
+      "ref": "U1",
+      "pin": "R5",
+      "x": 33.02,
+      "y": 19.05,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO4"
+    },
+    {
+      "ref": "U1",
+      "pin": "R6",
+      "x": 33.02,
+      "y": 21.59,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO16"
+    },
+    {
+      "ref": "U1",
+      "pin": "R7",
+      "x": 33.02,
+      "y": 24.13,
+      "net": "INT1",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO17"
+    },
+    {
+      "ref": "U1",
+      "pin": "R8",
+      "x": 33.02,
+      "y": 26.67,
+      "net": "CS",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO5"
+    },
+    {
+      "ref": "U1",
+      "pin": "R9",
+      "x": 33.02,
+      "y": 29.21,
+      "net": "SCLK",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO18"
+    },
+    {
+      "ref": "U1",
+      "pin": "R10",
+      "x": 33.02,
+      "y": 31.75,
+      "net": "MISO",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO19"
+    },
+    {
+      "ref": "U1",
+      "pin": "R11",
+      "x": 33.02,
+      "y": 34.29,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO21"
+    },
+    {
+      "ref": "U1",
+      "pin": "R12",
+      "x": 33.02,
+      "y": 36.83,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "RX0"
+    },
+    {
+      "ref": "U1",
+      "pin": "R13",
+      "x": 33.02,
+      "y": 39.37,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "TX0"
+    },
+    {
+      "ref": "U1",
+      "pin": "R14",
+      "x": 33.02,
+      "y": 41.91,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO22"
+    },
+    {
+      "ref": "U1",
+      "pin": "R15",
+      "x": 33.02,
+      "y": 44.45,
+      "net": "MOSI",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GPIO23"
+    },
+    {
+      "ref": "J1",
+      "pin": "1",
+      "x": 47.498,
+      "y": 27.94,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "OSDO"
+    },
+    {
+      "ref": "J1",
+      "pin": "2",
+      "x": 50.038,
+      "y": 27.94,
+      "net": "3V3",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "3V3"
+    },
+    {
+      "ref": "J1",
+      "pin": "3",
+      "x": 52.578,
+      "y": 27.94,
+      "net": "GND",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GND"
+    },
+    {
+      "ref": "J1",
+      "pin": "4",
+      "x": 55.118,
+      "y": 27.94,
+      "net": "SCLK",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "SCL/SCK"
+    },
+    {
+      "ref": "J1",
+      "pin": "5",
+      "x": 57.658,
+      "y": 27.94,
+      "net": "MOSI",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "SDA/MOSI"
+    },
+    {
+      "ref": "J1",
+      "pin": "6",
+      "x": 60.198,
+      "y": 27.94,
+      "net": "CS",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "CS"
+    },
+    {
+      "ref": "J1",
+      "pin": "7",
+      "x": 62.738,
+      "y": 27.94,
+      "net": "MISO",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "SDO/MISO"
+    },
+    {
+      "ref": "J2",
+      "pin": "1",
+      "x": 48.768,
+      "y": 14.732,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "OCS"
+    },
+    {
+      "ref": "J2",
+      "pin": "2",
+      "x": 51.308,
+      "y": 14.732,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "CLK"
+    },
+    {
+      "ref": "J2",
+      "pin": "3",
+      "x": 53.848,
+      "y": 14.732,
+      "net": "INT1",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "INT1"
+    },
+    {
+      "ref": "J2",
+      "pin": "4",
+      "x": 56.388,
+      "y": 14.732,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "SCX"
+    },
+    {
+      "ref": "J2",
+      "pin": "5",
+      "x": 58.928,
+      "y": 14.732,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "SDX"
+    },
+    {
+      "ref": "J2",
+      "pin": "6",
+      "x": 61.468,
+      "y": 14.732,
+      "net": "NC",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "CLK_CTL"
+    },
+    {
+      "ref": "U3",
+      "pin": "1",
+      "x": 82.042,
+      "y": 47.752,
+      "net": "USB_IN",
+      "diameter": 2.0,
+      "drill": 1.2,
+      "plated": true,
+      "label": "IN+"
+    },
+    {
+      "ref": "U3",
+      "pin": "2",
+      "x": 82.042,
+      "y": 39.116,
+      "net": "GND",
+      "diameter": 2.0,
+      "drill": 1.2,
+      "plated": true,
+      "label": "IN-"
+    },
+    {
+      "ref": "U3",
+      "pin": "4",
+      "x": 58.166,
+      "y": 42.164,
+      "net": "GND",
+      "diameter": 2.0,
+      "drill": 1.2,
+      "plated": true,
+      "label": "B-"
+    },
+    {
+      "ref": "U3",
+      "pin": "5",
+      "x": 58.166,
+      "y": 45.212,
+      "net": "BAT+",
+      "diameter": 2.0,
+      "drill": 1.2,
+      "plated": true,
+      "label": "B+"
+    },
+    {
+      "ref": "U3",
+      "pin": "6",
+      "x": 58.166,
+      "y": 47.752,
+      "net": "CHG_OUT",
+      "diameter": 2.0,
+      "drill": 1.2,
+      "plated": true,
+      "label": "OUT+"
+    },
+    {
+      "ref": "U3",
+      "pin": "7",
+      "x": 58.166,
+      "y": 39.116,
+      "net": "GND",
+      "diameter": 2.0,
+      "drill": 1.2,
+      "plated": true,
+      "label": "OUT-"
+    },
+    {
+      "ref": "D1",
+      "pin": "1",
+      "x": 65.278,
+      "y": 31.242,
+      "net": "USB_IN",
+      "diameter": 2.2,
+      "drill": 1.0,
+      "plated": true,
+      "label": "A"
+    },
+    {
+      "ref": "D1",
+      "pin": "2",
+      "x": 75.438,
+      "y": 31.242,
+      "net": "PWR_OR",
+      "diameter": 2.2,
+      "drill": 1.0,
+      "plated": true,
+      "label": "K"
+    },
+    {
+      "ref": "D2",
+      "pin": "1",
+      "x": 65.278,
+      "y": 26.67,
+      "net": "CHG_OUT",
+      "diameter": 2.2,
+      "drill": 1.0,
+      "plated": true,
+      "label": "A"
+    },
+    {
+      "ref": "D2",
+      "pin": "2",
+      "x": 75.438,
+      "y": 26.67,
+      "net": "PWR_OR",
+      "diameter": 2.2,
+      "drill": 1.0,
+      "plated": true,
+      "label": "K"
+    },
+    {
+      "ref": "R1",
+      "pin": "1",
+      "x": 38.1,
+      "y": 46.228,
+      "net": "BAT+",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "BAT+"
+    },
+    {
+      "ref": "R1",
+      "pin": "2",
+      "x": 48.26,
+      "y": 46.228,
+      "net": "DIV_A",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "DIV_A"
+    },
+    {
+      "ref": "R2",
+      "pin": "1",
+      "x": 50.546,
+      "y": 44.196,
+      "net": "DIV_A",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "DIV_A"
+    },
+    {
+      "ref": "R2",
+      "pin": "2",
+      "x": 50.546,
+      "y": 34.036,
+      "net": "ADC_BAT",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "ADC"
+    },
+    {
+      "ref": "R3",
+      "pin": "1",
+      "x": 38.354,
+      "y": 32.004,
+      "net": "GND",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "GND"
+    },
+    {
+      "ref": "R3",
+      "pin": "2",
+      "x": 48.514,
+      "y": 32.004,
+      "net": "ADC_BAT",
+      "diameter": 1.8,
+      "drill": 1.0,
+      "plated": true,
+      "label": "ADC"
+    },
+    {
+      "ref": "SW1",
+      "pin": "1",
+      "x": 74.93,
+      "y": 18.288,
+      "net": "NC",
+      "diameter": 2.2,
+      "drill": 1.1,
+      "plated": true,
+      "label": "OFF"
+    },
+    {
+      "ref": "SW1",
+      "pin": "2",
+      "x": 77.47,
+      "y": 18.288,
+      "net": "PWR_OR",
+      "diameter": 2.2,
+      "drill": 1.1,
+      "plated": true,
+      "label": "COM"
+    },
+    {
+      "ref": "SW1",
+      "pin": "3",
+      "x": 80.01,
+      "y": 18.288,
+      "net": "SYS_5V",
+      "diameter": 2.2,
+      "drill": 1.1,
+      "plated": true,
+      "label": "ON"
+    },
+    {
+      "ref": "J3",
+      "pin": "+",
+      "x": 68.58,
+      "y": 8.128,
+      "net": "BAT+",
+      "diameter": 4.0,
+      "drill": 2.0,
+      "plated": true,
+      "label": "BAT+"
+    },
+    {
+      "ref": "J3",
+      "pin": "-",
+      "x": 76.2,
+      "y": 8.128,
+      "net": "GND",
+      "diameter": 4.0,
+      "drill": 2.0,
+      "plated": true,
+      "label": "BAT-"
+    }
+  ],
+  "npth": [
+    {
+      "ref": "SW1",
+      "pin": "M1",
+      "x": 73.152,
+      "y": 15.24,
+      "net": "NPTH",
+      "diameter": 1.8,
+      "drill": 1.8,
+      "plated": false,
+      "label": ""
+    },
+    {
+      "ref": "SW1",
+      "pin": "M2",
+      "x": 81.788,
+      "y": 15.24,
+      "net": "NPTH",
+      "diameter": 1.8,
+      "drill": 1.8,
+      "plated": false,
+      "label": ""
+    },
+    {
+      "ref": "H",
+      "pin": "1",
+      "x": 3.81,
+      "y": 3.81,
+      "net": "NPTH",
+      "diameter": 3.0,
+      "drill": 2.6,
+      "plated": false,
+      "label": ""
+    },
+    {
+      "ref": "H",
+      "pin": "2",
+      "x": 82.55,
+      "y": 3.81,
+      "net": "NPTH",
+      "diameter": 3.0,
+      "drill": 2.6,
+      "plated": false,
+      "label": ""
+    },
+    {
+      "ref": "H",
+      "pin": "3",
+      "x": 3.81,
+      "y": 49.53,
+      "net": "NPTH",
+      "diameter": 3.0,
+      "drill": 2.6,
+      "plated": false,
+      "label": ""
+    },
+    {
+      "ref": "H",
+      "pin": "4",
+      "x": 53.34,
+      "y": 49.53,
+      "net": "NPTH",
+      "diameter": 3.0,
+      "drill": 2.6,
+      "plated": false,
+      "label": ""
+    }
+  ],
+  "tracks": [
+    {
+      "net": "USB_IN",
+      "layer": "F.Cu",
+      "points": [
+        [
+          82.042,
+          47.752
+        ],
+        [
+          65.278,
+          47.752
+        ],
+        [
+          65.278,
+          31.242
+        ]
+      ],
+      "width": 0.8
+    },
+    {
+      "net": "CHG_OUT",
+      "layer": "F.Cu",
+      "points": [
+        [
+          58.166,
+          47.752
+        ],
+        [
+          58.166,
+          46.99
+        ],
+        [
+          63.246,
+          46.99
+        ],
+        [
+          63.246,
+          29.718
+        ],
+        [
+          64.008,
+          29.718
+        ],
+        [
+          64.008,
+          29.21
+        ],
+        [
+          65.278,
+          29.21
+        ],
+        [
+          65.278,
+          26.67
+        ]
+      ],
+      "width": 0.8
+    },
+    {
+      "net": "PWR_OR",
+      "layer": "F.Cu",
+      "points": [
+        [
+          75.438,
+          31.242
+        ],
+        [
+          75.438,
+          26.67
+        ]
+      ],
+      "width": 1.0
+    },
+    {
+      "net": "PWR_OR",
+      "layer": "F.Cu",
+      "points": [
+        [
+          75.438,
+          26.67
+        ],
+        [
+          75.438,
+          20.066
+        ],
+        [
+          77.47,
+          20.066
+        ],
+        [
+          77.47,
+          18.288
+        ]
+      ],
+      "width": 1.0
+    },
+    {
+      "net": "SYS_5V",
+      "layer": "F.Cu",
+      "points": [
+        [
+          7.62,
+          8.89
+        ],
+        [
+          31.242,
+          8.89
+        ],
+        [
+          31.242,
+          7.112
+        ],
+        [
+          65.786,
+          7.112
+        ],
+        [
+          65.786,
+          13.462
+        ],
+        [
+          80.01,
+          13.462
+        ],
+        [
+          80.01,
+          18.288
+        ]
+      ],
+      "width": 1.0
+    },
+    {
+      "net": "BAT+",
+      "layer": "F.Cu",
+      "points": [
+        [
+          58.166,
+          45.212
+        ],
+        [
+          52.07,
+          45.212
+        ],
+        [
+          52.07,
+          47.498
+        ],
+        [
+          49.53,
+          47.498
+        ],
+        [
+          49.53,
+          48.006
+        ],
+        [
+          38.1,
+          48.006
+        ],
+        [
+          38.1,
+          46.228
+        ]
+      ],
+      "width": 1.0
+    },
+    {
+      "net": "BAT+",
+      "layer": "B.Cu",
+      "points": [
+        [
+          58.166,
+          45.212
+        ],
+        [
+          58.166,
+          43.942
+        ],
+        [
+          68.58,
+          43.942
+        ],
+        [
+          68.58,
+          8.128
+        ]
+      ],
+      "width": 1.0
+    },
+    {
+      "net": "3V3",
+      "layer": "F.Cu",
+      "points": [
+        [
+          33.02,
+          8.89
+        ],
+        [
+          33.02,
+          9.652
+        ],
+        [
+          46.99,
+          9.652
+        ],
+        [
+          46.99,
+          26.162
+        ],
+        [
+          50.038,
+          26.162
+        ],
+        [
+          50.038,
+          27.94
+        ]
+      ],
+      "width": 0.6
+    },
+    {
+      "net": "GND",
+      "layer": "B.Cu",
+      "points": [
+        [
+          7.62,
+          11.43
+        ],
+        [
+          31.242,
+          11.43
+        ],
+        [
+          31.242,
+          7.112
+        ],
+        [
+          38.354,
+          7.112
+        ],
+        [
+          38.354,
+          32.004
+        ]
+      ],
+      "width": 1.0
+    },
+    {
+      "net": "GND",
+      "layer": "F.Cu",
+      "points": [
+        [
+          38.354,
+          32.004
+        ],
+        [
+          38.354,
+          29.718
+        ],
+        [
+          52.578,
+          29.718
+        ],
+        [
+          52.578,
+          27.94
+        ]
+      ],
+      "width": 1.0
+    },
+    {
+      "net": "GND",
+      "layer": "F.Cu",
+      "points": [
+        [
+          52.578,
+          27.94
+        ],
+        [
+          52.578,
+          39.116
+        ],
+        [
+          58.166,
+          39.116
+        ]
+      ],
+      "width": 1.0
+    },
+    {
+      "net": "GND",
+      "layer": "F.Cu",
+      "points": [
+        [
+          58.166,
+          39.116
+        ],
+        [
+          58.166,
+          42.164
+        ]
+      ],
+      "width": 1.0
+    },
+    {
+      "net": "GND",
+      "layer": "B.Cu",
+      "points": [
+        [
+          58.166,
+          39.116
+        ],
+        [
+          67.056,
+          39.116
+        ]
+      ],
+      "width": 1.0
+    },
+    {
+      "net": "GND",
+      "layer": "F.Cu",
+      "points": [
+        [
+          67.056,
+          39.116
+        ],
+        [
+          82.042,
+          39.116
+        ]
+      ],
+      "width": 1.0
+    },
+    {
+      "net": "GND",
+      "layer": "F.Cu",
+      "points": [
+        [
+          52.578,
+          27.94
+        ],
+        [
+          52.578,
+          16.51
+        ],
+        [
+          71.374,
+          16.51
+        ]
+      ],
+      "width": 1.0
+    },
+    {
+      "net": "GND",
+      "layer": "B.Cu",
+      "points": [
+        [
+          71.374,
+          16.51
+        ],
+        [
+          71.374,
+          8.128
+        ],
+        [
+          76.2,
+          8.128
+        ]
+      ],
+      "width": 1.0
+    },
+    {
+      "net": "SCLK",
+      "layer": "F.Cu",
+      "points": [
+        [
+          33.02,
+          29.21
+        ],
+        [
+          33.02,
+          28.194
+        ],
+        [
+          45.466,
+          28.194
+        ]
+      ],
+      "width": 0.4
+    },
+    {
+      "net": "SCLK",
+      "layer": "B.Cu",
+      "points": [
+        [
+          45.466,
+          28.194
+        ],
+        [
+          45.974,
+          28.194
+        ],
+        [
+          45.974,
+          29.464
+        ],
+        [
+          55.118,
+          29.464
+        ],
+        [
+          55.118,
+          27.94
+        ]
+      ],
+      "width": 0.4
+    },
+    {
+      "net": "MOSI",
+      "layer": "B.Cu",
+      "points": [
+        [
+          33.02,
+          44.45
+        ],
+        [
+          33.02,
+          43.434
+        ],
+        [
+          46.99,
+          43.434
+        ],
+        [
+          46.99,
+          30.226
+        ],
+        [
+          57.658,
+          30.226
+        ],
+        [
+          57.658,
+          27.94
+        ]
+      ],
+      "width": 0.4
+    },
+    {
+      "net": "MISO",
+      "layer": "B.Cu",
+      "points": [
+        [
+          33.02,
+          31.75
+        ],
+        [
+          36.83,
+          31.75
+        ],
+        [
+          36.83,
+          33.528
+        ],
+        [
+          44.196,
+          33.528
+        ],
+        [
+          44.196,
+          26.416
+        ],
+        [
+          62.738,
+          26.416
+        ],
+        [
+          62.738,
+          27.94
+        ]
+      ],
+      "width": 0.4
+    },
+    {
+      "net": "CS",
+      "layer": "F.Cu",
+      "points": [
+        [
+          33.02,
+          26.67
+        ],
+        [
+          45.72,
+          26.67
+        ],
+        [
+          45.72,
+          25.146
+        ]
+      ],
+      "width": 0.4
+    },
+    {
+      "net": "CS",
+      "layer": "B.Cu",
+      "points": [
+        [
+          45.72,
+          25.146
+        ],
+        [
+          60.198,
+          25.146
+        ]
+      ],
+      "width": 0.4
+    },
+    {
+      "net": "CS",
+      "layer": "F.Cu",
+      "points": [
+        [
+          60.198,
+          25.146
+        ],
+        [
+          60.198,
+          27.94
+        ]
+      ],
+      "width": 0.4
+    },
+    {
+      "net": "INT1",
+      "layer": "F.Cu",
+      "points": [
+        [
+          33.02,
+          24.13
+        ],
+        [
+          33.02,
+          23.114
+        ],
+        [
+          45.72,
+          23.114
+        ]
+      ],
+      "width": 0.4
+    },
+    {
+      "net": "INT1",
+      "layer": "B.Cu",
+      "points": [
+        [
+          45.72,
+          23.114
+        ],
+        [
+          53.848,
+          23.114
+        ],
+        [
+          53.848,
+          14.732
+        ]
+      ],
+      "width": 0.4
+    },
+    {
+      "net": "ADC_BAT",
+      "layer": "F.Cu",
+      "points": [
+        [
+          7.62,
+          41.91
+        ],
+        [
+          31.496,
+          41.91
+        ],
+        [
+          31.496,
+          45.974
+        ],
+        [
+          36.576,
+          45.974
+        ],
+        [
+          36.576,
+          33.528
+        ],
+        [
+          48.514,
+          33.528
+        ],
+        [
+          48.514,
+          32.004
+        ]
+      ],
+      "width": 0.4
+    },
+    {
+      "net": "ADC_BAT",
+      "layer": "F.Cu",
+      "points": [
+        [
+          48.514,
+          32.004
+        ],
+        [
+          48.514,
+          34.036
+        ],
+        [
+          50.546,
+          34.036
+        ]
+      ],
+      "width": 0.4
+    },
+    {
+      "net": "DIV_A",
+      "layer": "F.Cu",
+      "points": [
+        [
+          48.26,
+          46.228
+        ],
+        [
+          48.26,
+          44.196
+        ],
+        [
+          50.546,
+          44.196
+        ]
+      ],
+      "width": 0.4
+    }
+  ],
+  "vias": [
+    {
+      "net": "GND",
+      "x": 67.056,
+      "y": 39.116,
+      "diameter": 1.2,
+      "drill": 0.4
+    },
+    {
+      "net": "GND",
+      "x": 71.374,
+      "y": 16.51,
+      "diameter": 1.2,
+      "drill": 0.4
+    },
+    {
+      "net": "SCLK",
+      "x": 45.466,
+      "y": 28.194,
+      "diameter": 1.2,
+      "drill": 0.4
+    },
+    {
+      "net": "CS",
+      "x": 45.72,
+      "y": 25.146,
+      "diameter": 1.2,
+      "drill": 0.4
+    },
+    {
+      "net": "CS",
+      "x": 60.198,
+      "y": 25.146,
+      "diameter": 1.2,
+      "drill": 0.4
+    },
+    {
+      "net": "INT1",
+      "x": 45.72,
+      "y": 23.114,
+      "diameter": 1.2,
+      "drill": 0.4
+    }
+  ]
+}
