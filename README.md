@@ -1,6 +1,6 @@
-# PurrTrack32
+# RaptorVR 1.0
 
-PurrTrack32 is a **prototype** SlimeVR carrier and enclosure for the **ELEGOO ESP-WROOM-32 USB-C 30-pin development board** and the **SlimeVR MuMo V1.1 ICM-45686 + QMC6309 breakout**. Its rounded outline, clear assembly zones, paired 1N5817 charge diodes, through-hole construction, and 50 mm strap chassis are inspired by the meowCarrier approach while using a larger ESP32-specific layout.
+RaptorVR 1.0 is a **prototype** SlimeVR carrier and enclosure for the **ELEGOO ESP-WROOM-32 USB-C 30-pin development board** and the **SlimeVR MuMo V1.1 ICM-45686 + QMC6309 breakout**. Its rounded outline, clear assembly zones, paired 1N5817 charge diodes, through-hole construction, and 50 mm strap chassis are inspired by the meowCarrier approach while using a larger ESP32-specific layout.
 
 ![PCB preview](previews/pcb_top.png)
 
@@ -22,7 +22,7 @@ This package passed automated geometry, copper-clearance, Gerber-parsing, and wa
 
 ## JLCPCB files
 
-Upload [`hardware/pcb/PurrTrack32_JLCPCB_Gerbers.zip`](hardware/pcb/PurrTrack32_JLCPCB_Gerbers.zip) directly to JLCPCB. Recommended prototype settings:
+Upload [`hardware/pcb/RaptorVR_1_0_JLCPCB_Gerbers.zip`](hardware/pcb/RaptorVR_1_0_JLCPCB_Gerbers.zip) directly to JLCPCB. Recommended prototype settings:
 
 - 2 layers, 86.36 x 53.34 mm
 - 1.0 mm FR-4
@@ -62,9 +62,9 @@ Battery monitoring uses GPIO36/VP and these firmware values, in kOhm:
 
 Creality Print can import the STL files in `hardware/enclosure/`:
 
-- `PurrTrack32_case_50mm_strap`: rounded chassis with ESP32 USB-C, charger USB-C, switch openings, and four reinforced screw bosses.
-- `PurrTrack32_battery_separator_tray`: full insulating barrier between the LiPo and PCB, with PCB standoffs and a small wire slot.
-- `PurrTrack32_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes and a 0.20 mm-per-side alignment plug.
+- `RaptorVR_1_0_case_50mm_strap`: rounded chassis with ESP32 USB-C, charger USB-C, switch openings, and four reinforced screw bosses.
+- `RaptorVR_1_0_battery_separator_tray`: full insulating barrier between the LiPo and PCB, with PCB standoffs and a small wire slot.
+- `RaptorVR_1_0_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes and a 0.20 mm-per-side alignment plug.
 
 Use four **M3 x 10 mm thread-forming/self-tapping pan-head screws for plastic**. The case has 2.6 mm blind pilot holes, so the screw tips cannot reach the PCB or battery. Tighten only until the lid is seated; overtightening can strip printed threads. Do not use screws longer than 10 mm unless you first verify the remaining boss depth.
 
@@ -83,9 +83,9 @@ Starting Creality settings: 0.4 mm nozzle, 0.20 mm layers, four walls, five top/
 
 ## Source and regeneration
 
-- Editable PCB layout: `hardware/pcb/source/PurrTrack32.kicad_pcb`
+- Editable PCB layout: `hardware/pcb/source/RaptorVR_1_0.kicad_pcb`
 - Dimension-controlled generator: `hardware/pcb/source/generate_project.py`
-- Human-readable schematic: `hardware/pcb/schematic/PurrTrack32_schematic.pdf`
+- Human-readable schematic: `hardware/pcb/schematic/RaptorVR_1_0_schematic.pdf`
 - Validation report: `VALIDATION.json`
 
 Regenerate with Python 3.12 plus `numpy`, `shapely`, `trimesh`, `manifold3d`, `matplotlib`, `reportlab`, and `gerbonara`.
@@ -97,4 +97,4 @@ Regenerate with Python 3.12 plus `numpy`, `shapely`, `trimesh`, `manifold3d`, `m
 - Official MuMo V1.1 schematic: https://docs.slimevr.dev/files/mumo-schematic-1.1.pdf
 - SlimeVR firmware: https://github.com/SlimeVR/SlimeVR-Tracker-ESP
 
-The PurrTrack32 scripts, PCB layout, documentation, and enclosure geometry are released under the MIT License. Third-party modules and reference projects retain their original licenses.
+The RaptorVR 1.0 scripts, PCB layout, documentation, and enclosure geometry are released under the MIT License. Third-party modules and reference projects retain their original licenses.

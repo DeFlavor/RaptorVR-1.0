@@ -457,7 +457,7 @@ def write_gerbers(components, pads, npth, tracks, vias):
     for t in tracks:
         nets_by_layer[t.layer].append(t)
 
-    for layer, filename in [("F.Cu", "PurrTrack32-F_Cu.gtl"), ("B.Cu", "PurrTrack32-B_Cu.gbl")]:
+    for layer, filename in [("F.Cu", "RaptorVR_1_0-F_Cu.gtl"), ("B.Cu", "RaptorVR_1_0-B_Cu.gbl")]:
         lines = gerber_header(layer)
         for p in pads:
             dc = 18 if p.diameter >= 3.5 else 17 if p.diameter >= 2.3 else 16 if p.diameter >= 2.0 else 15
@@ -470,7 +470,7 @@ def write_gerbers(components, pads, npth, tracks, vias):
         lines.append("M02*")
         (GERBERS / filename).write_text("\n".join(lines) + "\n", encoding="ascii")
 
-    for side, filename in [("F", "PurrTrack32-F_Mask.gts"), ("B", "PurrTrack32-B_Mask.gbs")]:
+    for side, filename in [("F", "RaptorVR_1_0-F_Mask.gts"), ("B", "RaptorVR_1_0-B_Mask.gbs")]:
         lines = gerber_header(f"{side}.Mask")
         for p in pads:
             dia = p.diameter + 0.15
@@ -488,7 +488,7 @@ def write_gerbers(components, pads, npth, tracks, vias):
         x1, y1, x2, y2 = c.outline
         draw_polyline(silk, [(x1, y1), (x2, y1), (x2, y2), (x1, y2), (x1, y1)], 19)
     labels = [
-        ("PURRTRACK32", BOARD_W / 2, BOARD_H - 2.2, 2.2, 0, True),
+        ("RAPTORVR 1.0", BOARD_W / 2, BOARD_H - 2.2, 2.2, 0, True),
         ("ESP32 USB", mm(80), 2.0, 1.2, 0, True),
         ("MUMO 1.1", mm(220), mm(118), 1.35, 0, True),
         ("TP4056 USB-C", mm(276), mm(137), 1.15, 0, True),
@@ -509,7 +509,7 @@ def write_gerbers(components, pads, npth, tracks, vias):
     cat = [(39.0, 5.2), (40.5, 7.0), (42.0, 5.7), (44.0, 5.7), (45.5, 7.0), (47.0, 5.2)]
     draw_polyline(silk, cat, 19)
     silk.append("M02*")
-    (GERBERS / "PurrTrack32-F_Silkscreen.gto").write_text("\n".join(silk) + "\n", encoding="ascii")
+    (GERBERS / "RaptorVR_1_0-F_Silkscreen.gto").write_text("\n".join(silk) + "\n", encoding="ascii")
 
     bottom_silk = gerber_header("B.Silkscreen")
     for txt, x, y, size in [
@@ -519,17 +519,17 @@ def write_gerbers(components, pads, npth, tracks, vias):
         for poly in text_polygons(txt, x, y, size, 0, True):
             write_region(bottom_silk, poly)
     bottom_silk.append("M02*")
-    (GERBERS / "PurrTrack32-B_Silkscreen.gbo").write_text("\n".join(bottom_silk) + "\n", encoding="ascii")
+    (GERBERS / "RaptorVR_1_0-B_Silkscreen.gbo").write_text("\n".join(bottom_silk) + "\n", encoding="ascii")
 
     outline = gerber_header("Edge.Cuts")
     coords = list(rounded_rect_polygon(BOARD_W, BOARD_H, BOARD_R).exterior.coords)
     draw_polyline(outline, coords, 19)
     outline.append("M02*")
-    (GERBERS / "PurrTrack32-Edge_Cuts.gm1").write_text("\n".join(outline) + "\n", encoding="ascii")
+    (GERBERS / "RaptorVR_1_0-Edge_Cuts.gm1").write_text("\n".join(outline) + "\n", encoding="ascii")
 
     # Excellon drills, separated into plated and non-plated files for JLCPCB.
     def drill_file(path: Path, entries, tools):
-        lines = ["M48", ";DRILL file generated for PurrTrack32", "METRIC,TZ"]
+        lines = ["M48", ";DRILL file generated for RaptorVR 1.0", "METRIC,TZ"]
         for tid, dia in tools.items():
             lines.append(f"T{tid:02d}C{dia:.3f}")
         lines.append("%")
@@ -546,11 +546,11 @@ def write_gerbers(components, pads, npth, tracks, vias):
 
     plated_entries = pads + [Pad("V", str(i), v.x, v.y, v.net, v.diameter, v.drill, True) for i, v in enumerate(vias)]
     ptools = {1: 0.400, 2: 1.000, 3: 1.100, 4: 1.200, 5: 2.000}
-    drill_file(GERBERS / "PurrTrack32-PTH.drl", plated_entries, ptools)
+    drill_file(GERBERS / "RaptorVR_1_0-PTH.drl", plated_entries, ptools)
     ntools = {1: 1.800, 2: 2.600}
-    drill_file(GERBERS / "PurrTrack32-NPTH.drl", npth, ntools)
+    drill_file(GERBERS / "RaptorVR_1_0-NPTH.drl", npth, ntools)
 
-    zip_path = PCB / "PurrTrack32_JLCPCB_Gerbers.zip"
+    zip_path = PCB / "RaptorVR_1_0_JLCPCB_Gerbers.zip"
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
         for f in sorted(GERBERS.iterdir()):
             zf.write(f, f.name)
@@ -566,7 +566,7 @@ def write_kicad_pcb(components, pads, npth, tracks, vias):
     nets = sorted({p.net for p in pads if p.net != "NC"})
     net_ids = {n: i + 1 for i, n in enumerate(nets)}
     lines = [
-        '(kicad_pcb (version 20240108) (generator "PurrTrack32 generator")',
+        '(kicad_pcb (version 20240108) (generator "RaptorVR 1.0 generator")',
         '  (general (thickness 1.0))',
         '  (paper "A4")',
         '  (layers (0 "F.Cu" signal) (31 "B.Cu" signal) (36 "B.SilkS" user "b.silkscreen") (37 "F.SilkS" user "f.silkscreen") (44 "Edge.Cuts" user))',
@@ -577,7 +577,7 @@ def write_kicad_pcb(components, pads, npth, tracks, vias):
         lines.append(f'  (net {i} "{n}")')
     for c in components:
         x1, y1, x2, y2 = c.outline
-        lines.append(f'  (footprint "PurrTrack32:{c.ref}" (layer "F.Cu") (at 0 0)')
+        lines.append(f'  (footprint "RaptorVR_1_0:{c.ref}" (layer "F.Cu") (at 0 0)')
         lines.append(f'    (property "Reference" "{c.ref}" (at {x1:.3f} {y2 + 1.5:.3f} 0) (layer "F.SilkS"))')
         lines.append(f'    (property "Value" "{kicad_escape(c.value)}" (at {x1:.3f} {y1 - 1.5:.3f} 0) (layer "F.Fab"))')
         lines.append(f'    (fp_rect (start {x1:.3f} {y1:.3f}) (end {x2:.3f} {y2:.3f}) (stroke (width 0.18) (type default)) (fill none) (layer "F.SilkS"))')
@@ -586,7 +586,7 @@ def write_kicad_pcb(components, pads, npth, tracks, vias):
             lines.append(f'    (pad "{p.pin}" thru_hole circle (at {p.x:.3f} {p.y:.3f}) (size {p.diameter:.3f} {p.diameter:.3f}) (drill {p.drill:.3f}) (layers "*.Cu" "*.Mask"){netpart})')
         lines.append("  )")
     for p in npth:
-        lines.append(f'  (footprint "PurrTrack32:NPTH_{p.ref}_{p.pin}" (layer "F.Cu") (at 0 0) (pad "" np_thru_hole circle (at {p.x:.3f} {p.y:.3f}) (size {p.drill:.3f} {p.drill:.3f}) (drill {p.drill:.3f}) (layers "*.Cu" "*.Mask")))')
+        lines.append(f'  (footprint "RaptorVR_1_0:NPTH_{p.ref}_{p.pin}" (layer "F.Cu") (at 0 0) (pad "" np_thru_hole circle (at {p.x:.3f} {p.y:.3f}) (size {p.drill:.3f} {p.drill:.3f}) (drill {p.drill:.3f}) (layers "*.Cu" "*.Mask")))')
     for t in tracks:
         nid = net_ids[t.net]
         for a, b in zip(t.points, t.points[1:]):
@@ -597,7 +597,7 @@ def write_kicad_pcb(components, pads, npth, tracks, vias):
     for a, b in zip(outline, outline[1:]):
         lines.append(f'  (gr_line (start {a[0]:.3f} {a[1]:.3f}) (end {b[0]:.3f} {b[1]:.3f}) (stroke (width 0.18) (type default)) (layer "Edge.Cuts"))')
     lines.append(")")
-    (SOURCE / "PurrTrack32.kicad_pcb").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (SOURCE / "RaptorVR_1_0.kicad_pcb").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def write_bom_and_pinout(components, pads):
@@ -694,12 +694,12 @@ def schematic_drawing():
     ax.plot([12.95, 13.45], [5.84, 5.84], color="#334155", lw=2)
     ax.plot([13.02, 13.38], [5.76, 5.76], color="#334155", lw=2)
     ax.plot([13.10, 13.30], [5.68, 5.68], color="#334155", lw=2)
-    ax.text(8.0, 9.45, "PurrTrack32 - ESP32 + MuMo Carrier", ha="center", fontsize=22, weight="bold", color="#4c1d95")
+    ax.text(8.0, 9.45, "RaptorVR 1.0 - ESP32 + MuMo Carrier", ha="center", fontsize=22, weight="bold", color="#4c1d95")
     ax.text(8.0, 9.05, "Functional schematic and assembly map - revision 0.2 prototype", ha="center", fontsize=10, color="#475569")
     ax.text(8.0, 0.35, "WARNING: verify every connection with a multimeter before attaching a LiPo. Never reverse BAT+ and BAT-.", ha="center", fontsize=9, color="#b91c1c", weight="bold")
     fig.tight_layout()
-    fig.savefig(SCHEMATIC / "PurrTrack32_schematic.pdf", bbox_inches="tight")
-    fig.savefig(SCHEMATIC / "PurrTrack32_schematic.png", dpi=180, bbox_inches="tight")
+    fig.savefig(SCHEMATIC / "RaptorVR_1_0_schematic.pdf", bbox_inches="tight")
+    fig.savefig(SCHEMATIC / "RaptorVR_1_0_schematic.png", dpi=180, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -730,8 +730,8 @@ def pcb_preview(components, pads, npth, tracks, vias):
             x1, y1, x2, y2 = c.outline
             ax.add_patch(Rectangle((x1, y1), x2 - x1, y2 - y1, fill=False, ec="white", lw=0.8))
             ax.text((x1 + x2) / 2, y2 + 0.55, c.ref, ha="center", color="white", fontsize=7, weight="bold")
-        ax.text(BOARD_W / 2, BOARD_H - 1.7, "PURRTRACK32", ha="center", va="top", color="white", fontsize=13, weight="bold")
-        ax.set_title(f"PurrTrack32 - {layer_name} preview", fontsize=15, weight="bold")
+        ax.text(BOARD_W / 2, BOARD_H - 1.7, "RAPTORVR 1.0", ha="center", va="top", color="white", fontsize=13, weight="bold")
+        ax.set_title(f"RaptorVR 1.0 - {layer_name} preview", fontsize=15, weight="bold")
         fig.savefig(PREVIEWS / filename, dpi=180, bbox_inches="tight", facecolor="#f8fafc")
         plt.close(fig)
 
@@ -807,7 +807,7 @@ def enclosure_models():
         slot = trimesh.creation.box([6.0, 50.5, 2.2]); slot.apply_translation([x + 2.0, 30.0, -1.0])
         rails.append(trimesh.boolean.difference([rail, slot], engine="manifold"))
     case = trimesh.boolean.union([case] + rails, engine="manifold")
-    export_mesh(case, "PurrTrack32_case_50mm_strap")
+    export_mesh(case, "RaptorVR_1_0_case_50mm_strap")
 
     # Full electrical separator tray; battery wires pass through the covered slot.
     tray = rounded_box_mesh(86.0, 54.0, 1.4, 3.5)
@@ -821,7 +821,7 @@ def enclosure_models():
         hole = trimesh.creation.cylinder(radius=1.4, height=6.0, sections=32)
         hole.apply_translation([hx, hy, 0])
         tray = trimesh.boolean.difference([tray, hole], engine="manifold")
-    export_mesh(tray, "PurrTrack32_battery_separator_tray")
+    export_mesh(tray, "RaptorVR_1_0_battery_separator_tray")
 
     # Screw-on lid. The plug has 0.20 mm clearance per side in the 88 x 56 mm cavity;
     # it aligns the lid while four M3 screws provide positive retention.
@@ -844,7 +844,7 @@ def enclosure_models():
         hole.apply_translation([sx, sy, 0.0])
         clearance_holes.append(hole)
     lid = trimesh.boolean.difference([lid] + clearance_holes, engine="manifold")
-    export_mesh(lid, "PurrTrack32_screw_lid_M3")
+    export_mesh(lid, "RaptorVR_1_0_screw_lid_M3")
 
     # Simple exploded preview.
     fig = plt.figure(figsize=(10, 8))
@@ -862,7 +862,7 @@ def enclosure_models():
     ax.set_xlim(-5, 100); ax.set_ylim(-5, 65); ax.set_zlim(-5, 85)
     ax.view_init(elev=27, azim=-58)
     ax.set_box_aspect((1.5, 1.0, 1.0)); ax.set_axis_off()
-    ax.set_title("PurrTrack32 enclosure - exploded view", fontsize=16, weight="bold")
+    ax.set_title("RaptorVR 1.0 enclosure - exploded view", fontsize=16, weight="bold")
     fig.savefig(PREVIEWS / "enclosure_exploded.png", dpi=180, bbox_inches="tight", facecolor="#f8fafc")
     plt.close(fig)
 
@@ -930,9 +930,9 @@ def validate_design(pads, npth, tracks, vias, meshes):
 
 
 def write_readme():
-    readme = r'''# PurrTrack32
+    readme = r'''# RaptorVR 1.0
 
-PurrTrack32 is a **prototype** SlimeVR carrier and enclosure for the **ELEGOO ESP-WROOM-32 USB-C 30-pin development board** and the **SlimeVR MuMo V1.1 ICM-45686 + QMC6309 breakout**. Its rounded outline, clear assembly zones, paired 1N5817 charge diodes, through-hole construction, and 50 mm strap chassis are inspired by the meowCarrier approach while using a larger ESP32-specific layout.
+RaptorVR 1.0 is a **prototype** SlimeVR carrier and enclosure for the **ELEGOO ESP-WROOM-32 USB-C 30-pin development board** and the **SlimeVR MuMo V1.1 ICM-45686 + QMC6309 breakout**. Its rounded outline, clear assembly zones, paired 1N5817 charge diodes, through-hole construction, and 50 mm strap chassis are inspired by the meowCarrier approach while using a larger ESP32-specific layout.
 
 ![PCB preview](previews/pcb_top.png)
 
@@ -954,7 +954,7 @@ This package passed automated geometry, copper-clearance, Gerber-parsing, and wa
 
 ## JLCPCB files
 
-Upload [`hardware/pcb/PurrTrack32_JLCPCB_Gerbers.zip`](hardware/pcb/PurrTrack32_JLCPCB_Gerbers.zip) directly to JLCPCB. Recommended prototype settings:
+Upload [`hardware/pcb/RaptorVR_1_0_JLCPCB_Gerbers.zip`](hardware/pcb/RaptorVR_1_0_JLCPCB_Gerbers.zip) directly to JLCPCB. Recommended prototype settings:
 
 - 2 layers, 86.36 x 53.34 mm
 - 1.0 mm FR-4
@@ -994,9 +994,9 @@ Battery monitoring uses GPIO36/VP and these firmware values, in kOhm:
 
 Creality Print can import the STL files in `hardware/enclosure/`:
 
-- `PurrTrack32_case_50mm_strap`: rounded chassis with ESP32 USB-C, charger USB-C, switch openings, and four reinforced screw bosses.
-- `PurrTrack32_battery_separator_tray`: full insulating barrier between the LiPo and PCB, with PCB standoffs and a small wire slot.
-- `PurrTrack32_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes and a 0.20 mm-per-side alignment plug.
+- `RaptorVR_1_0_case_50mm_strap`: rounded chassis with ESP32 USB-C, charger USB-C, switch openings, and four reinforced screw bosses.
+- `RaptorVR_1_0_battery_separator_tray`: full insulating barrier between the LiPo and PCB, with PCB standoffs and a small wire slot.
+- `RaptorVR_1_0_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes and a 0.20 mm-per-side alignment plug.
 
 Use four **M3 x 10 mm thread-forming/self-tapping pan-head screws for plastic**. The case has 2.6 mm blind pilot holes, so the screw tips cannot reach the PCB or battery. Tighten only until the lid is seated; overtightening can strip printed threads. Do not use screws longer than 10 mm unless you first verify the remaining boss depth.
 
@@ -1015,9 +1015,9 @@ Starting Creality settings: 0.4 mm nozzle, 0.20 mm layers, four walls, five top/
 
 ## Source and regeneration
 
-- Editable PCB layout: `hardware/pcb/source/PurrTrack32.kicad_pcb`
+- Editable PCB layout: `hardware/pcb/source/RaptorVR_1_0.kicad_pcb`
 - Dimension-controlled generator: `hardware/pcb/source/generate_project.py`
-- Human-readable schematic: `hardware/pcb/schematic/PurrTrack32_schematic.pdf`
+- Human-readable schematic: `hardware/pcb/schematic/RaptorVR_1_0_schematic.pdf`
 - Validation report: `VALIDATION.json`
 
 Regenerate with Python 3.12 plus `numpy`, `shapely`, `trimesh`, `manifold3d`, `matplotlib`, `reportlab`, and `gerbonara`.
@@ -1029,12 +1029,12 @@ Regenerate with Python 3.12 plus `numpy`, `shapely`, `trimesh`, `manifold3d`, `m
 - Official MuMo V1.1 schematic: https://docs.slimevr.dev/files/mumo-schematic-1.1.pdf
 - SlimeVR firmware: https://github.com/SlimeVR/SlimeVR-Tracker-ESP
 
-The PurrTrack32 scripts, PCB layout, documentation, and enclosure geometry are released under the MIT License. Third-party modules and reference projects retain their original licenses.
+The RaptorVR 1.0 scripts, PCB layout, documentation, and enclosure geometry are released under the MIT License. Third-party modules and reference projects retain their original licenses.
 '''
     (OUT / "README.md").write_text(readme, encoding="utf-8")
     license_text = '''MIT License
 
-Copyright (c) 2026 PurrTrack32 contributors
+Copyright (c) 2026 RaptorVR 1.0 contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -1083,7 +1083,7 @@ def main():
     write_readme()
     shutil.copy2(Path(__file__), SOURCE / "generate_project.py")
     design = {
-        "name": "PurrTrack32",
+        "name": "RaptorVR 1.0",
         "revision": "0.2-prototype-screw-lid",
         "board_mm": [BOARD_W, BOARD_H, 1.0],
         "components": [{"ref": c.ref, "value": c.value, "outline": c.outline} for c in components],
