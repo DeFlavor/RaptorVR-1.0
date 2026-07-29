@@ -8,7 +8,7 @@ PurrTrack32 is a **prototype** SlimeVR carrier and enclosure for the **ELEGOO ES
 
 ## Important status
 
-This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.1 as a prototype and inspect it in a Gerber viewer before ordering.
+This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.2 as a prototype and inspect it in a Gerber viewer before ordering.
 
 ## Supported parts
 
@@ -60,13 +60,15 @@ Battery monitoring uses GPIO36/VP and these firmware values, in kOhm:
 
 ## Enclosure
 
-Creality Print can import the STL or 3MF files in `hardware/enclosure/`:
+Creality Print can import the STL files in `hardware/enclosure/`:
 
-- `PurrTrack32_case_50mm_strap`: rounded chassis with ESP32 USB-C, charger USB-C, and switch openings.
+- `PurrTrack32_case_50mm_strap`: rounded chassis with ESP32 USB-C, charger USB-C, switch openings, and four reinforced screw bosses.
 - `PurrTrack32_battery_separator_tray`: full insulating barrier between the LiPo and PCB, with PCB standoffs and a small wire slot.
-- `PurrTrack32_snap_lid`: 0.20 mm-per-side plug clearance plus small retention bumps.
+- `PurrTrack32_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes and a 0.20 mm-per-side alignment plug.
 
-Starting Creality settings: 0.4 mm nozzle, 0.20 mm layers, four walls, five top/bottom layers, 35% gyroid infill, PLA+ or PETG. Print the case upright, the separator flat, and the lid with its large outer face on the build plate. If your printer runs tight, scale only X/Y to 100.2% or lightly sand the four lid bumps.
+Use four **M3 x 10 mm thread-forming/self-tapping pan-head screws for plastic**. The case has 2.6 mm blind pilot holes, so the screw tips cannot reach the PCB or battery. Tighten only until the lid is seated; overtightening can strip printed threads. Do not use screws longer than 10 mm unless you first verify the remaining boss depth.
+
+Starting Creality settings: 0.4 mm nozzle, 0.20 mm layers, four walls, five top/bottom layers, 35% gyroid infill, PLA+ or PETG. Print the case upright, the separator flat, and the lid with its large outer face on the build plate. If your printer runs tight, scale only the lid X/Y to 100.2% or lightly sand the alignment plug.
 
 ## Assembly safety
 

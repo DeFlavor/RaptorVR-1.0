@@ -695,7 +695,7 @@ def schematic_drawing():
     ax.plot([13.02, 13.38], [5.76, 5.76], color="#334155", lw=2)
     ax.plot([13.10, 13.30], [5.68, 5.68], color="#334155", lw=2)
     ax.text(8.0, 9.45, "PurrTrack32 - ESP32 + MuMo Carrier", ha="center", fontsize=22, weight="bold", color="#4c1d95")
-    ax.text(8.0, 9.05, "Functional schematic and assembly map - revision 0.1 prototype", ha="center", fontsize=10, color="#475569")
+    ax.text(8.0, 9.05, "Functional schematic and assembly map - revision 0.2 prototype", ha="center", fontsize=10, color="#475569")
     ax.text(8.0, 0.35, "WARNING: verify every connection with a multimeter before attaching a LiPo. Never reverse BAT+ and BAT-.", ha="center", fontsize=9, color="#b91c1c", weight="bold")
     fig.tight_layout()
     fig.savefig(SCHEMATIC / "PurrTrack32_schematic.pdf", bbox_inches="tight")
@@ -762,6 +762,26 @@ def enclosure_models():
     cavity.apply_translation([2.0, 2.0, 0])
     case = trimesh.boolean.difference([outer, cavity], engine="manifold")
 
+    # Four external screw bosses keep the fasteners clear of the PCB, battery,
+    # USB-C openings, and strap rails. A 2.6 mm blind pilot is intended for
+    # M3 x 10 mm thread-forming/self-tapping screws in PLA+ or PETG.
+    screw_centers = [(8.0, -1.0), (84.0, -1.0), (8.0, 61.0), (84.0, 61.0)]
+    screw_bosses = []
+    for sx, sy in screw_centers:
+        boss = trimesh.creation.cylinder(radius=4.5, height=H, sections=48)
+        boss.apply_translation([sx, sy, H / 2])
+        screw_bosses.append(boss)
+    case = trimesh.boolean.union([case] + screw_bosses, engine="manifold")
+
+    # With a 2 mm lid, an M3 x 10 mm screw gets about 8 mm of engagement.
+    # The blind pilot stops well above the internal electronics.
+    screw_pilots = []
+    for sx, sy in screw_centers:
+        pilot = trimesh.creation.cylinder(radius=1.30, height=11.0, sections=40)
+        pilot.apply_translation([sx, sy, 19.5])
+        screw_pilots.append(pilot)
+    case = trimesh.boolean.difference([case] + screw_pilots, engine="manifold")
+
     # Battery pocket ribs and separator-tray ledges.
     ribs = []
     for x, y, sx, sy in [(14, 9, 2, 42), (76, 9, 2, 42), (14, 9, 64, 2), (14, 49, 64, 2)]:
@@ -803,7 +823,8 @@ def enclosure_models():
         tray = trimesh.boolean.difference([tray, hole], engine="manifold")
     export_mesh(tray, "PurrTrack32_battery_separator_tray")
 
-    # Friction/snap lid. The plug has 0.20 mm clearance per side in the 88 x 56 mm cavity.
+    # Screw-on lid. The plug has 0.20 mm clearance per side in the 88 x 56 mm cavity;
+    # it aligns the lid while four M3 screws provide positive retention.
     lid_top = rounded_box_mesh(W, D, 2.0, 6.0)
     plug_outer = rounded_box_mesh(87.6, 55.6, 3.2, 4.0)
     plug_outer.apply_translation([2.2, 2.2, -3.2])
@@ -811,12 +832,19 @@ def enclosure_models():
     plug_inner.apply_translation([3.8, 3.8, -3.3])
     plug_ring = trimesh.boolean.difference([plug_outer, plug_inner], engine="manifold")
     lid = trimesh.boolean.union([lid_top, plug_ring], engine="manifold")
-    # Four small snap bumps; sand lightly if the printer runs tight.
-    bumps = []
-    for x, y, sx, sy in [(1.9, 28, 0.55, 5), (89.55, 28, 0.55, 5), (43.5, 1.9, 5, 0.55), (43.5, 57.55, 5, 0.55)]:
-        b = trimesh.creation.box([sx, sy, 1.2]); b.apply_translation([x + sx / 2, y + sy / 2, -2.0]); bumps.append(b)
-    lid = trimesh.boolean.union([lid] + bumps, engine="manifold")
-    export_mesh(lid, "PurrTrack32_snap_lid")
+    lid_lugs = []
+    for sx, sy in screw_centers:
+        lug = trimesh.creation.cylinder(radius=4.5, height=2.0, sections=48)
+        lug.apply_translation([sx, sy, 1.0])
+        lid_lugs.append(lug)
+    lid = trimesh.boolean.union([lid] + lid_lugs, engine="manifold")
+    clearance_holes = []
+    for sx, sy in screw_centers:
+        hole = trimesh.creation.cylinder(radius=1.70, height=6.0, sections=40)
+        hole.apply_translation([sx, sy, 0.0])
+        clearance_holes.append(hole)
+    lid = trimesh.boolean.difference([lid] + clearance_holes, engine="manifold")
+    export_mesh(lid, "PurrTrack32_screw_lid_M3")
 
     # Simple exploded preview.
     fig = plt.figure(figsize=(10, 8))
@@ -884,6 +912,13 @@ def validate_design(pads, npth, tracks, vias, meshes):
             raise RuntimeError(f"Mesh {i} has invalid volume")
     report["checks"]["all_stl_meshes_watertight"] = True
     report["checks"]["lid_xy_clearance_mm"] = 0.20
+    report["checks"]["lid_fasteners"] = {
+        "quantity": 4,
+        "recommended": "M3 x 10 mm thread-forming/self-tapping pan-head",
+        "lid_clearance_hole_mm": 3.4,
+        "case_blind_pilot_mm": 2.6,
+        "minimum_thread_engagement_mm": 8.0,
+    }
     report["checks"]["battery_pocket_mm"] = [64.0, 42.0, 7.0]
     report["warnings"].extend([
         "Prototype hardware: electrical operation has not been bench-tested on a physical PCB.",
@@ -905,7 +940,7 @@ PurrTrack32 is a **prototype** SlimeVR carrier and enclosure for the **ELEGOO ES
 
 ## Important status
 
-This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.1 as a prototype and inspect it in a Gerber viewer before ordering.
+This package passed automated geometry, copper-clearance, Gerber-parsing, and watertight-mesh checks. It has **not** been fabricated or electrically bench-tested. Treat revision 0.2 as a prototype and inspect it in a Gerber viewer before ordering.
 
 ## Supported parts
 
@@ -957,13 +992,15 @@ Battery monitoring uses GPIO36/VP and these firmware values, in kOhm:
 
 ## Enclosure
 
-Creality Print can import the STL or 3MF files in `hardware/enclosure/`:
+Creality Print can import the STL files in `hardware/enclosure/`:
 
-- `PurrTrack32_case_50mm_strap`: rounded chassis with ESP32 USB-C, charger USB-C, and switch openings.
+- `PurrTrack32_case_50mm_strap`: rounded chassis with ESP32 USB-C, charger USB-C, switch openings, and four reinforced screw bosses.
 - `PurrTrack32_battery_separator_tray`: full insulating barrier between the LiPo and PCB, with PCB standoffs and a small wire slot.
-- `PurrTrack32_snap_lid`: 0.20 mm-per-side plug clearance plus small retention bumps.
+- `PurrTrack32_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes and a 0.20 mm-per-side alignment plug.
 
-Starting Creality settings: 0.4 mm nozzle, 0.20 mm layers, four walls, five top/bottom layers, 35% gyroid infill, PLA+ or PETG. Print the case upright, the separator flat, and the lid with its large outer face on the build plate. If your printer runs tight, scale only X/Y to 100.2% or lightly sand the four lid bumps.
+Use four **M3 x 10 mm thread-forming/self-tapping pan-head screws for plastic**. The case has 2.6 mm blind pilot holes, so the screw tips cannot reach the PCB or battery. Tighten only until the lid is seated; overtightening can strip printed threads. Do not use screws longer than 10 mm unless you first verify the remaining boss depth.
+
+Starting Creality settings: 0.4 mm nozzle, 0.20 mm layers, four walls, five top/bottom layers, 35% gyroid infill, PLA+ or PETG. Print the case upright, the separator flat, and the lid with its large outer face on the build plate. If your printer runs tight, scale only the lid X/Y to 100.2% or lightly sand the alignment plug.
 
 ## Assembly safety
 
@@ -1022,7 +1059,15 @@ SOFTWARE.
 
 def main():
     if OUT.exists():
-        shutil.rmtree(OUT)
+        # Regenerate artifacts without destroying local Git history created
+        # after the first generation pass.
+        for child in OUT.iterdir():
+            if child.name == ".git":
+                continue
+            if child.is_dir():
+                shutil.rmtree(child)
+            else:
+                child.unlink()
     for d in (GERBERS, SCHEMATIC, SOURCE, PRINTABLES, PREVIEWS):
         d.mkdir(parents=True, exist_ok=True)
     components, pads, npth = build_components()
@@ -1039,7 +1084,7 @@ def main():
     shutil.copy2(Path(__file__), SOURCE / "generate_project.py")
     design = {
         "name": "PurrTrack32",
-        "revision": "0.1-prototype",
+        "revision": "0.2-prototype-screw-lid",
         "board_mm": [BOARD_W, BOARD_H, 1.0],
         "components": [{"ref": c.ref, "value": c.value, "outline": c.outline} for c in components],
         "pads": [p.__dict__ for p in pads],

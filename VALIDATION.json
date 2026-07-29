@@ -12,6 +12,13 @@
     "track_segment_count": 84,
     "all_stl_meshes_watertight": true,
     "lid_xy_clearance_mm": 0.2,
+    "lid_fasteners": {
+      "quantity": 4,
+      "recommended": "M3 x 10 mm thread-forming/self-tapping pan-head",
+      "lid_clearance_hole_mm": 3.4,
+      "case_blind_pilot_mm": 2.6,
+      "minimum_thread_engagement_mm": 8.0
+    },
     "battery_pocket_mm": [
       64.0,
       42.0,
