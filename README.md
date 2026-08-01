@@ -65,14 +65,14 @@ Battery monitoring uses GPIO36/VP and these firmware values, in kOhm:
 
 Creality Print can import the STL files in `hardware/enclosure/`:
 
-- `RaptorVR_1_0_case_50mm_strap`: rounded chassis with ESP32 USB-C, charger USB-C, switch openings, two diagonally opposed reinforced screw bosses, and two reinforced underside rails rotated so its 92 mm long side is vertical when worn with a 50 mm body strap.
+- `RaptorVR_1_0_case_50mm_strap`: rounded chassis with ESP32 USB-C, charger USB-C, switch openings, four reinforced screw bosses, and two reinforced underside rails rotated so its 92 mm long side is vertical when worn with a 50 mm body strap.
 - `RaptorVR_1_0_battery_separator_tray`: full insulating barrier between the LiPo and PCB, with PCB standoffs and a small wire slot.
-- `RaptorVR_1_0_screw_lid_M3`: positively retained lid with two diagonally opposed 3.4 mm M3 clearance holes, a 0.20 mm-per-side alignment plug, and the centered raised RaptorVR logo.
+- `RaptorVR_1_0_screw_lid_M3`: positively retained lid with four 3.4 mm M3 clearance holes, a 0.20 mm-per-side alignment plug, and the centered raised RaptorVR logo.
 - `RaptorVR_1_0_chassis_assembled.glb` and `RaptorVR_1_0_chassis_exploded.glb`: accurate colored models for interactive orbit and zoom viewing.
 
 The complete supplied logo image is traced directly into the lid—raptor mark, original lettering shapes, spacing, and the original `RAPTOR`/`VR` two-line arrangement. No substitute font is used. The artwork is scaled uniformly to 54 mm wide and embossed 0.8 mm above the lid for clear resin and FDM visibility. For a contrasting FDM logo, add a filament change for the final four 0.20 mm layers; a single-color print also works. For resin, angle the lid approximately 20-30 degrees and place supports on the inside face so the raised logo remains clean.
 
-Use two **M3 x 10 mm thread-forming/self-tapping pan-head screws for plastic**, installed in the two diagonal corner bosses. The case has 2.6 mm blind pilot holes, so the screw tips cannot reach the PCB or battery. Tighten each screw gradually, alternating between the two corners until the lid is seated; overtightening can strip printed threads or tilt the lid. Do not use screws longer than 10 mm unless you first verify the remaining boss depth.
+Use four **M3 x 10 mm thread-forming/self-tapping pan-head screws for plastic**. The case has 2.6 mm blind pilot holes, so the screw tips cannot reach the PCB or battery. Tighten only until the lid is seated; overtightening can strip printed threads. Do not use screws longer than 10 mm unless you first verify the remaining boss depth.
 
 For vertical body mounting, thread one **50 mm (2-inch) elastic or nylon strap** beneath both underside rails, then add an adjustable side-release buckle or hook-and-loop closure. The rails are turned 90 degrees from the earlier layout: the strap travels across the 60 mm short side, leaving the 92 mm long side vertical on your body. The passages are 50.5 mm wide and 2.2 mm high. Round or lightly sand any sharp printed edges before installing the strap, leave enough slack for comfortable movement and circulation, and inspect the strap and rails before each use. Do not resin-print the flexible strap itself.
 
